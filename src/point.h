@@ -17,12 +17,8 @@ public:
     double y() const {return _y;}
 
     bool operator==(const Point &pt) const {
-      if((this->_x == pt._x) && (this->_y == pt._y)){
-        return true;
-      }
-      else{
-        return false;
-      }
+      if (_x == pt._x && _y == pt._y){return true;}
+  	  return false;
     }
 
     std::string info() const{
