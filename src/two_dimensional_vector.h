@@ -28,6 +28,9 @@ public:
     }
 
     double dot(const TwoDimensionalVector *vec) const {
+      //直角點積應為零
+      //銳角的點積應該是正數
+      //鈍角點積應為負
       double ax = _a->x();
       double ay = _a->y();
       double bx = _b->x();
@@ -37,6 +40,9 @@ public:
     }
 
     double cross(const TwoDimensionalVector *vec) const {
+      //兩個平行向量的叉積應該為零
+      //兩個對邊向量的叉積應該是正的
+      //兩個向量順時針的叉積應該是負數
       double ax = _a->x();
       double ay = _a->y();
       double bx = _b->x();
