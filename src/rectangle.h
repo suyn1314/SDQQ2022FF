@@ -11,16 +11,26 @@ private:
     TwoDimensionalVector *_widthVec;
 
 public:
-    Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) {}
+    Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) :_lengthVec(lengthVec) ,_widthVec(widthVec){}
     ~Rectangle() {}
 
-    double length() const {}
+    double length() const {
+      return 0;
+    }
 
-    double width() const {}
+    double width() const {
+      return 0;
+    }
 
-    double area() const override {}
+    double area() const override {
+      return 0;
+    }
 
-    double perimeter() const override {}
+    double perimeter() const override {
+      return 0;
+    }
 
-    std::string info() const override {}
+    std::string info() const override {
+      return 0;
+    }
 };

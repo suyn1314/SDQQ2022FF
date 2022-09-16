@@ -5,23 +5,19 @@
 class Point
 {
 private:
-     double _x;
-     double _y;
+     const double _x;
+     const double _y;
 
 public:
-    Point(double x, double y) {
-      this->_x = x;
-      this->_y = y;
-    }~Point() {}
+    Point(double x, double y) : _x(x), _y(y){}
+    ~Point() {}
 
     double x() const {return _x;}
 
     double y() const {return _y;}
 
     bool operator==(const Point &pt) const {
-      if( _x == pt._x && _y == pt._y)
-        return true;
-      return false;
+      return (this->_x == pt._x) && (this->_y == pt._y);
     }
 
     std::string info() const{

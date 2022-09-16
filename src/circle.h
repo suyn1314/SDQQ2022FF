@@ -11,16 +11,22 @@ private:
     TwoDimensionalVector *_radiusVec;
 
 public:
-    Circle(TwoDimensionalVector *radiusVec) {}
+    Circle(TwoDimensionalVector *radiusVec) : _radiusVec(radiusVec) {}
     ~Circle() {}
 
-    double radius() const {}
-
-    double area() const override {
-      
+    double radius() const {
+      return 0;
     }
 
-    double perimeter() const override {}
+    double area() const override {
+      return 0;
+    }
 
-    std::string info() const override {}
+    double perimeter() const override {
+      return 0;
+    }
+
+    std::string info() const override {
+      return 0;
+    }
 };
