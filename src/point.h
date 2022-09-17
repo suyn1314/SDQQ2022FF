@@ -15,7 +15,13 @@ public:
     double x() const {return _x;}
 
     double y() const {return _y;}
-
+/*
+operatorTest:
+Value of: p1 == p2
+Actual: false
+Expected: true
+*/
+//FIXED
     bool operator==(const Point &pt) const {
       if (_x == pt._x && _y == pt._y){return true;}
   	  return false;

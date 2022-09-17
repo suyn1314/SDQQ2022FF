@@ -23,6 +23,6 @@ public:
     }
 
     std::string info() const override {
-      return 0;
+      return "Triangle (" + _v1->info() + ", " + _v2->info() + ")";
     }
 };

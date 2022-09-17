@@ -27,6 +27,6 @@ public:
     }
 
     std::string info() const override {
-      return 0;
+      return "Vector (" + _a->info() + ", " + _b->info() + ")";
     }
 };

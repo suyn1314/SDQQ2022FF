@@ -28,6 +28,7 @@ public:
     }
 
     double dot(const TwoDimensionalVector *vec) const {
+      //FIXED:
       //直角點積應為零
       //銳角的點積應該是正數
       //鈍角點積應為負
@@ -40,6 +41,7 @@ public:
     }
 
     double cross(const TwoDimensionalVector *vec) const {
+      //FIXED:
       //兩個平行向量的叉積應該為零
       //兩個對邊向量的叉積應該是正的
       //兩個向量順時針的叉積應該是負數
@@ -52,12 +54,6 @@ public:
     }
 
     std::string info() const {
-      char *p; p = new char[256];
-      sprintf( p,"%.2f", _a->x());std::string ax = p;
-      sprintf( p,"%.2f", _a->y());std::string ay = p;
-      sprintf( p,"%.2f", _b->x());std::string bx = p;
-      sprintf( p,"%.2f", _b->y());std::string by = p;
-      delete p;
-      return "Vector ((" + ax + ", " + ay + "), (" + bx + ", "+ by + "))";
+      return "Vector (" + _a->info() + ", " + _b->info() + ")";
     }
 };
