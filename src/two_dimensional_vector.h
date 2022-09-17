@@ -6,58 +6,60 @@
 class TwoDimensionalVector
 {
 private:
+    //指標變數_a指向函數Point
     const Point *_a;
     const Point *_b;
 
 public:
-    TwoDimensionalVector(const Point *a, const Point *b) : _a(a) ,_b(b) {
-      _a->a;
-      _b->b;
-    }
+    TwoDimensionalVector(const Point *a, const Point *b) : _a(a) , _b(b) {}
     ~TwoDimensionalVector() {}
-
+    //指標函數a回傳指標變數_a
     const Point *a() const {return _a;}
 
     const Point *b() const {return _b;}
 
     double length() const {
-      /*
-      double a1 = a().begin();
-      double a2 = a().end();
-      double b1 = b().begin();
-      double b2 = b().end();
-      double long = sqrt((a1-b1)*(a1-b1)+(a2-b2)*(a2-b2))
-      return long
-      */
-      return 24.5;
+      double ax = _a->x();
+      double ay = _a->y();
+      double bx = _b->x();
+      double by = _b->y();
+      //向量長度公式:|v| = sqrt(x^2 + y^2)
+      return sqrt((ax - bx)*(ax - bx)+(ay - by)*(ay - by));
     }
 
     double dot(const TwoDimensionalVector *vec) const {
-      ///double a1 = _a.begin;
-      //double result = (std::begin(_a)*b1 = std::begin (_b)) + (a2 = std::end(_a)*b2 = std::end(_b));
-      //return result;
-      return 0;
+      //FIXED:
+      //直角點積應為零
+      //銳角的點積應該是正數
+      //鈍角點積應為負
+      double ax = _a->x();
+      double ay = _a->y();
+      double bx = _b->x();
+      double by = _b->y();
+      //內積運算 : a . b = x1*x2 + y1*y2
+      return ax * ay + bx * by;
     }
 
     double cross(const TwoDimensionalVector *vec) const {
-      return 0;
+      //FIXED:
+      //兩個平行向量的叉積應該為零
+      //兩個對邊向量的叉積應該是正的
+      //兩個向量順時針的叉積應該是負數
+      double ax = _a->x();
+      double ay = _a->y();
+      double bx = _b->x();
+      double by = _b->y();
+      //外積運算 : a x b = x1*y2 - x2*y1
+      return ax * by - ay * bx;
     }
 
     std::string info() const {
-
       char *p; p = new char[256];
-      sprintf(p,"%f",_a);
-      std::string a1 = p;
-      /*
-      sprintf(p, "%.2f",a().end());
-      std::string a2 = p;
-      sprintf(p, "%.2f",b().begin());
-      std::string b1 = p;
-      sprintf(p, "%.2f",b().end());
-      std::string b2 = p;
+      sprintf( p,"%.2f", _a->x());std::string ax = p;
+      sprintf( p,"%.2f", _a->y());std::string ay = p;
+      sprintf( p,"%.2f", _b->x());std::string bx = p;
+      sprintf( p,"%.2f", _b->y());std::string by = p;
       delete p;
-      return "Vector ((" + a1 + ", " + a2 + "), (" + b1 + ", " + b2 + ")";
-      */
-      return "Vector ((-8.42, 3.42), (-3.38, 4.30)) "+ a1;
+      return "Vector ((" + ax + ", " + ay + "), (" + bx + ", "+ by + "))";
     }
 };

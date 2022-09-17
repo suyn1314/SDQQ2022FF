@@ -11,12 +11,18 @@ private:
     TwoDimensionalVector *_v2;
 
 public:
-    Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) {}
+    Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) : _v1(v1), _v2(v2){}
     ~Triangle() {}
 
-    double area() const override {}
+    double area() const override {
+      return 0;
+    }
 
-    double perimeter() const override {}
+    double perimeter() const override {
+      return 0;
+    }
 
-    std::string info() const override {}
+    std::string info() const override {
+      return 0;
+    }
 };

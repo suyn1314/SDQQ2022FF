@@ -15,9 +15,16 @@ public:
     double x() const {return _x;}
 
     double y() const {return _y;}
-
+/*
+operatorTest:
+Value of: p1 == p2
+Actual: false
+Expected: true
+*/
+//FIXED
     bool operator==(const Point &pt) const {
-      return (this->_x == pt._x) && (this->_y == pt._y);
+      if (_x == pt._x && _y == pt._y){return true;}
+  	  return false;
     }
 
     std::string info() const{
