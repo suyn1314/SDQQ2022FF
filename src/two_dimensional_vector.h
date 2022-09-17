@@ -54,12 +54,6 @@ public:
     }
 
     std::string info() const {
-      char *p; p = new char[256];
-      sprintf( p,"%.2f", _a->x());std::string ax = p;
-      sprintf( p,"%.2f", _a->y());std::string ay = p;
-      sprintf( p,"%.2f", _b->x());std::string bx = p;
-      sprintf( p,"%.2f", _b->y());std::string by = p;
-      delete p;
-      return "Vector ((" + ax + ", " + ay + "), (" + bx + ", "+ by + "))";
+      return "Vector (" + _a->info() + ", " + _b->info() + ")";
     }
 };
