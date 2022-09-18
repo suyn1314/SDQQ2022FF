@@ -31,6 +31,6 @@ public:
     }
 
     std::string info() const override {
-      return 0;
+      return "Rectangle  (" + _lengthVec->info() + ", " + _widthVec->info() + ")";
     }
 };
