@@ -65,7 +65,7 @@ public:
           cx = v2bx; cy = v2by;
           double vAB_x = bx - ax,  vAB_y = by - ay;
           double vBC_x = cx - bx,  vBC_y = cy - by;
-          return -(vAB_x * vBC_x + vAB_y * vBC_y);
+          return vAB_x * vBC_x + vAB_y * vBC_y;
           }
       //銳角的點積應該是正數
       //內積運算 : a . b = x1*x2 + y1*y2
