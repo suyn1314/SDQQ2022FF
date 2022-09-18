@@ -21,7 +21,8 @@ TEST(TwoDimensionalVectorTeat,length){
 }
 
 TEST(TwoDimensionalVectorTeat,dot){
-  ASSERT_EQ(8,(new TwoDimensionalVector(new Point(1, 3),new Point(5, 1)))->dot((new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))));
+  ASSERT_EQ(15,(new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))->dot((new TwoDimensionalVector(new Point(0, 0),new Point(5, -10)))));
+  ASSERT_EQ(34,(new TwoDimensionalVector(new Point(7, 2),new Point(1, 1)))->dot((new TwoDimensionalVector(new Point(1, 1),new Point(7, -1)))));
 }
 
 TEST(TwoDimensionalVectorTeat,cross){
