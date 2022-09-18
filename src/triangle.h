@@ -41,7 +41,7 @@ public:
             bx = _v1->a()->x(); by = _v1->a()->y();
             cx = _v2->b()->x(); cy = _v2->b()->y();
             }
-        else{throw std::string("This is not a triangle!")}
+        else{throw std::string("This is not a triangle!");}
         //定義向量座標
         vAB_x = fabs( bx - ax );  vAB_y = fabs( by - ay );
         vAC_x = fabs( cx - ax );  vAC_y = fabs( cy - ay );
