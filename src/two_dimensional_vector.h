@@ -63,7 +63,10 @@ public:
       vAC_x = cx - ax;  vAC_y = cy - ay;
       //直角點積應為零
       //內積運算 : a . b = x1*x2 + y1*y2
-      return vAB_x * vAC_x + vAB_y * vAC_y;
+      double result = vAB_x * vAC_x + vAB_y * vAC_y;
+      //四捨五入到小數後第3位
+      double dotresult = round(result*1000)/1000;
+      return dotresult;
     }
 
     double cross(const TwoDimensionalVector *vec) const {
