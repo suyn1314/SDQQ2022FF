@@ -27,6 +27,6 @@ public:
     }
 
     std::string info() const override {
-      return "Circle  (" + _radiusVec->info() + ")";
+      return "Circle (" + _radiusVec->info() + ")";
     }
 };

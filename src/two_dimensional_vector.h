@@ -121,7 +121,7 @@ public:
       //兩個逆時針向量的叉積應該是正的
       //兩個向量順時針的叉積應該是負數
       //外積運算 : a x b = ax*by - bx*ay
-
+      return 0;
     }
 
     std::string info() const {
