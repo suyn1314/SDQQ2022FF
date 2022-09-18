@@ -27,18 +27,29 @@ public:
             bx = _v1->a()->x(); by = _v1->a()->y();
             cx = _v2->a()->x(); cy = _v2->a()->y();
            }
-        else{
-            throw std::string("This is not a triangle!");
-        }
+        // v1的a與v2的b點相同
+        else if((_v1->a()->x() == _v2->b()->x()) && (_v1->a()->y() == _v2->b()->y())){
+               //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
+            ax = _v1->a()->x(); ay = _v1->a()->y();
+            bx = _v1->b()->x(); by = _v1->b()->y();
+            cx = _v2->a()->x(); cy = _v2->a()->y();
+           }
+        // v1的b與v2的a點相同
+        else if((_v1->b()->x() == _v2->a()->x()) && (_v1->b()->y() == _v2->a()->y())){
+              //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
+            ax = _v1->b()->x(); ay = _v1->b()->y();
+            bx = _v1->a()->x(); by = _v1->a()->y();
+            cx = _v2->b()->x(); cy = _v2->b()->y();
+            }
         //定義向量座標
         vAB_x = fabs( bx - ax );  vAB_y = fabs( by - ay );
         vAC_x = fabs( cx - ax );  vAC_y = fabs( cy - ay );
         vBC_x = fabs( cx - bx );  vBC_y = fabs( cy - by );
 
         //定義向量大小(長度)
-        _sideAB = sqrt(  pow( vAB_y, 3)  +  pow( vAB_x, 3)  );
-        _sideAC = sqrt(  pow( vAC_y, 3)  +  pow( vAC_x, 3)  );
-        _sideBC = sqrt(  pow( vBC_y, 3)  +  pow( vBC_x, 3)  );
+        _sideAB = sqrt(  pow( vAB_y, 2)  +  pow( vAB_x, 2)  );
+        _sideAC = sqrt(  pow( vAC_y, 2)  +  pow( vAC_x, 2)  );
+        _sideBC = sqrt(  pow( vBC_y, 2)  +  pow( vBC_x, 2)  );
 
         //兩邊之合不得大於等於第三邊，邊長不得為零
         if (_sideAB + _sideAC < _sideBC ||
