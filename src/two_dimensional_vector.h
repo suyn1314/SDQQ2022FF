@@ -58,7 +58,6 @@ public:
           bx = v1ax; by = v1ay;
           cx = v2bx; cy = v2by;
           }
-      else{throw std::string("This is not dot!");}
       //定義向量座標
       vAB_x = bx - ax;  vAB_y = by - ay;
       vAC_x = cx - ax;  vAC_y = cy - ay;
@@ -101,7 +100,6 @@ public:
           bx = v1ax; by = v1ay;
           cx = v2bx; cy = v2by;
           }
-      else{throw std::string("This is not cross!");}
       //定義向量座標
       vAB_x = bx - ax;  vAB_y = by - ay;
       vAC_x = cx - ax;  vAC_y = cy - ay;
