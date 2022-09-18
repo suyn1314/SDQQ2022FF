@@ -68,16 +68,45 @@ public:
     }
 
     double cross(const TwoDimensionalVector *vec) const {
-      //FIXED:
-      //兩個平行向量的叉積應該為零
-      //兩個對邊向量的叉積應該是正的
-      //兩個向量順時針的叉積應該是負數
-      double ax = _a->x();
-      double ay = _a->y();
-      double bx = _b->x();
-      double by = _b->y();
-      //外積運算 : a x b = x1*y2 - x2*y1
-      return ax * by - ay * bx;
+      double v1ax = _a->x(), v1ay = _a->y(), v1bx = _b->x(), v1by = _b->y();
+      double v2ax = vec->a()->x(), v2ay = vec->a()->y(), v2bx = vec->b()->x(), v2by = vec->b()->y();
+      double vAB_x, vAC_x, vAB_y, vAC_y;
+      double ax, ay, bx, by, cx, cy;
+      // v1, v2的a點相同
+
+      if((v1ax == v2ax) && (v1ay == v2ay)){
+          //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
+          ax = v1ax; ay = v1ay;
+          bx = v1bx; by = v1by;
+          cx = v2bx; cy = v2by;
+         }
+      // v1, v2的b點相同
+      else if((v1bx == v2bx) && (v1by == v2by)){
+          //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
+          ax = v1bx; ay = v1by;
+          bx = v1ax; by = v1ay;
+          cx = v2ax; cy = v2ay;
+         }
+      // v1的a與v2的b點相同
+      else if((v1ax == v2bx) && (v1ay == v2by)){
+             //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
+          ax = v1ax; ay = v1ay;
+          bx = v1bx; by = v1by;
+          cx = v2ax; cy = v2ay;
+         }
+      // v1的b與v2的a點相同
+      else if((v1bx == v2ax) && (v1by == v2ay)){
+            //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
+          ax = v1bx; ay = v1by;
+          bx = v1ax; by = v1ay;
+          cx = v2bx; cy = v2by;
+          }
+      else{throw std::string("This is not cross!");}
+      //定義向量座標
+      vAB_x = bx - ax;  vAB_y = by - ay;
+      vAC_x = cx - ax;  vAC_y = cy - ay;
+      //外積運算 : a x b = ax*by - bx*ay
+      return vAB_x * vAC_y - vAC_x * vAB_y ;
     }
 
     std::string info() const {
