@@ -36,9 +36,9 @@ public:
         vBC_x = fabs( cx - bx );  vBC_y = fabs( cy - by );
 
         //定義向量大小(長度)
-        _sideAB = sqrt(  pow( vAB_y, 2)  +  pow( vAB_x, 2)  );
-        _sideAC = sqrt(  pow( vAC_y, 2)  +  pow( vAC_x, 2)  );
-        _sideBC = sqrt(  pow( vBC_y, 2)  +  pow( vBC_x, 2)  );
+        _sideAB = sqrt(  pow( vAB_y, 3)  +  pow( vAB_x, 3)  );
+        _sideAC = sqrt(  pow( vAC_y, 3)  +  pow( vAC_x, 3)  );
+        _sideBC = sqrt(  pow( vBC_y, 3)  +  pow( vBC_x, 3)  );
 
         //兩邊之合不得大於等於第三邊，邊長不得為零
         if (_sideAB + _sideAC < _sideBC ||
