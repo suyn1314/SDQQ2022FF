@@ -64,7 +64,7 @@ public:
     double area() const override {
         //三角形面積是叉積除以2
         //EX: _AB = (3, 0), _AC = (3, 4) , area = ( _AB * _AC ) / 2
-            return (_v1->cross(_v2))/2;
+            return fabs((_v1->cross(_v2))/2);
     }
 
     double perimeter() const override {
