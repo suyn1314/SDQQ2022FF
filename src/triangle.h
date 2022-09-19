@@ -33,7 +33,8 @@ public:
             if (_sideAB + _sideAC < _sideBC ||
             _sideBC + _sideAC < _sideAB ||
             _sideAB + _sideBC < _sideAC ||
-            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){ throw std::string("This is not a triangle!");
+            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){
+              throw std::string("This is not a triangle!");
             }
            }
         // v1, v2的b點相同
@@ -56,7 +57,8 @@ public:
             if (_sideAB + _sideAC < _sideBC ||
             _sideBC + _sideAC < _sideAB ||
             _sideAB + _sideBC < _sideAC ||
-            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){ throw std::string("This is not a triangle!");
+            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){
+              throw std::string("This is not a triangle!");
             }
            }
         // v1的a與v2的b點相同
@@ -79,7 +81,8 @@ public:
             if (_sideAB + _sideAC < _sideBC ||
             _sideBC + _sideAC < _sideAB ||
             _sideAB + _sideBC < _sideAC ||
-            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){ throw std::string("This is not a triangle!");
+            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){
+              throw std::string("This is not a triangle!");
             }
            }
         // v1的b與v2的a點相同
@@ -102,7 +105,8 @@ public:
             if (_sideAB + _sideAC < _sideBC ||
             _sideBC + _sideAC < _sideAB ||
             _sideAB + _sideBC < _sideAC ||
-            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){ throw std::string("This is not a triangle!");
+            _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){
+              //throw std::string("This is not a triangle!");
             }
         else{throw std::string("This is not a triangle!");}
       }
