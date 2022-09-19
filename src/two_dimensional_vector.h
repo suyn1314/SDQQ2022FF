@@ -109,58 +109,21 @@ public:
         return fabs(v1AB_x * v2AB_x + v1AB_y * v2AB_y);
       }
       return v1AB_x * v2AB_x + v1AB_y * v2AB_y;
-      // TODO: Dot Product With Acute Angle Should Be Positive
-      //銳角的點積應該是正數
     }
 
     double cross(const TwoDimensionalVector *vec) const {
       double v1ax = _a->x(), v1ay = _a->y(), v1bx = _b->x(), v1by = _b->y();
       double v2ax = vec->a()->x(), v2ay = vec->a()->y(), v2bx = vec->b()->x(), v2by = vec->b()->y();
-      double ax, ay, bx, by, cx, cy;
-      // v1, v2的a點相同
+      double v1AB_x = v1bx - v1ax,  v1AB_y = v1by - v1ay;
+      double v2AB_x = v2bx - v2ax,  v2AB_y = v2by - v2ay;
+      double _sideV1 = sqrt(  pow( v1AB_x, 2)  +  pow( v1AB_y, 2)  );
+      double _sideV2 = sqrt(  pow( v2AB_x, 2)  +  pow( v2AB_y, 2)  );
 
-      if((v1ax == v2ax) && (v1ay == v2ay)){
-          //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
-          ax = v1ax; ay = v1ay;
-          bx = v1bx; by = v1by;
-          cx = v2bx; cy = v2by;
-          double vAB_x = bx - ax,  vAB_y = by - ay;
-          double vAC_x = cx - ax,  vAC_y = cy - ay;
-          return vAB_x * vAC_y - vAC_x * vAB_y ;
-         }
-      // v1, v2的b點相同
-      else if((v1bx == v2bx) && (v1by == v2by)){
-          ax = v1ax; ay = v1ay;
-          bx = v2ax; by = v2ay;
-          cx = v1bx; cy = v1by;
-          double vAB_x = bx - ax,  vAB_y = by - ay;
-          double vCB_x = bx - cx,  vCB_y = by - cy;
-          return vAB_x * vCB_y - vCB_x * vAB_y ;
-         }
-      // v1的a與v2的b點相同
-      else if((v1ax == v2bx) && (v1ay == v2by)){
-          ax = v1ax; ay = v1ay;
-          bx = v1bx; by = v1by;
-          cx = v2ax; cy = v2ay;
-          double vAB_x = bx - ax, vAB_y = by - ay;
-          double vCA_x = ax - cx, vCA_y = ay - cy;
-          return vAB_x * vCA_y - vCA_x * vAB_y ;
-         }
-      // v1的b與v2的a點相同
-      else if((v1bx == v2ax) && (v1by == v2ay)){
-          ax = v1ax; ay = v1ay;
-          bx = v1bx; by = v1by;
-          cx = v2bx; cy = v2by;
-          double vAB_x = bx - ax,  vAB_y = by - ay;
-          double vBC_x = cx - bx,  vBC_y = cy - by;
-          return vAB_x * vBC_y - vBC_x * vAB_y ;
-          }
-      //定義向量座標
-      //cos<a,b>=(a.*b)/norm(a)/norm(b);
-      //兩個逆時針向量的叉積應該是正的
+      double sin = (v1AB_x * v2AB_y - v1AB_y * v2AB_x) / (_sideV1*_sideV2);
+      //if (sin > 0 ){return fabs(v1AB_x * v2AB_x + v1AB_y * v2AB_y);}
+      return v1AB_x * v2AB_y - v1AB_y * v2AB_x;
+      //CrossProductOfTwoVectorsWithClockwiseShouldBeNegative
       //兩個向量順時針的叉積應該是負數
-      //外積運算 : a x b = ax*by - bx*ay
-      return 0;
     }
 
     std::string info() const {
