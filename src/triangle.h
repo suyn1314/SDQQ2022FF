@@ -109,6 +109,23 @@ public:
               //throw std::string("This is not a triangle!");
             }
         else{throw std::string("This is not a triangle!");}
+        //定義向量座標
+        vAB_x = fabs( bx - ax );  vAB_y = fabs( by - ay );
+        vAC_x = fabs( cx - ax );  vAC_y = fabs( cy - ay );
+        vBC_x = fabs( cx - bx );  vBC_y = fabs( cy - by );
+
+        //定義向量大小(邊長)
+        _sideAB = sqrt(  pow( vAB_y, 2)  +  pow( vAB_x, 2)  );
+        _sideAC = sqrt(  pow( vAC_y, 2)  +  pow( vAC_x, 2)  );
+        _sideBC = sqrt(  pow( vBC_y, 2)  +  pow( vBC_x, 2)  );
+
+        //兩邊之合不得大於等於第三邊，邊長不得為零
+        if (_sideAB + _sideAC < _sideBC ||
+        _sideBC + _sideAC < _sideAB ||
+        _sideAB + _sideBC < _sideAC ||
+        _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){ throw std::string("This is not a triangle!");
+        }
+
       }
     }~Triangle() {}
 
