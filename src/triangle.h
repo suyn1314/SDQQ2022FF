@@ -82,7 +82,7 @@ public:
             _sideBC + _sideAC < _sideAB ||
             _sideAB + _sideBC < _sideAC ||
             _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){
-              throw std::string("This is not a triangle!");
+              //throw std::string("This is not a triangle!");
             }
            }
         // v1的b與v2的a點相同
