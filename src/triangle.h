@@ -9,7 +9,7 @@ private:
     TwoDimensionalVector *_v2;
     double ax, ay, bx, by, cx, cy;
     double _sideAB, _sideAC, _sideBC;
-    double vAB_x,vAB_y,vAC_x,vAC_y,vBC_x,vBC_y,vCB_x,vCB_y,vCA_x,vCA_y;
+    double vAB_x,vAB_y,vAC_x,vAC_y,vBC_x,vBC_y;
 public:
     Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) : _v1(v1), _v2(v2){
 
