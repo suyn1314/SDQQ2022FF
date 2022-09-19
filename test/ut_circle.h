@@ -4,6 +4,9 @@
 
 TEST(CircleTest,CircleRadius){
   ASSERT_EQ(5,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->radius());
+  ASSERT_EQ(5,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(-3, -4))))->radius());
+  ASSERT_NEAR(16.12,(new Circle(new TwoDimensionalVector(new Point(-5, -10), new Point(3, 4))))->radius(),0.1);
+  ASSERT_NEAR(9.21,(new Circle(new TwoDimensionalVector(new Point(-1, -1), new Point(-7, -8))))->radius(),0.1);
 }
 TEST(CircleTest,CircleArea) {
   ASSERT_NEAR(78.54,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->area(),0.1);

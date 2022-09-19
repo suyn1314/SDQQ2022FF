@@ -8,7 +8,6 @@ TEST(RectangleTest,RectangleValue){
   ASSERT_EQ(3,(new Rectangle(
     new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
     new TwoDimensionalVector(new Point(0, 0),new Point(0, 3))))->width());
-
 }
 
 TEST(RectangleTest,RectangleArea){
@@ -48,4 +47,28 @@ TEST(RectangleTest,RectangleInfo) {
     new TwoDimensionalVector(new Point(0, 0),new Point(3, 0)),
     new TwoDimensionalVector(new Point(0, 0),new Point(0, 4))
 ))->info());
+}
+
+TEST(RectangleTest,NotRectangle){
+  try{
+    Shape* rectangle = new Rectangle(
+      new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)),
+      new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)));
+  }catch(std::string e){
+    ASSERT_EQ("This is not a rectangle!",e);
+  }
+  try{
+    Shape* rectangle = new Rectangle(
+      new TwoDimensionalVector(new Point(1, 2),new Point(3, 4)),
+      new TwoDimensionalVector(new Point(1, 2),new Point(3, 4)));
+  }catch(std::string e){
+    ASSERT_EQ("This is not a rectangle!",e);
+  }
+  try{
+    Shape* rectangle = new Rectangle(
+      new TwoDimensionalVector(new Point(0, 2),new Point(3, 0)),
+      new TwoDimensionalVector(new Point(1, 0),new Point(0, 4)));
+  }catch(std::string e){
+    ASSERT_EQ("This is not a rectangle!",e);
+  }
 }

@@ -6,7 +6,6 @@ TEST(TwoDimensionalVectorTeat,Info){
   ASSERT_EQ("Vector ((-8.42, 3.42), (-3.38, 4.30))",(new TwoDimensionalVector(new Point(-8.419, 3.422222),new Point(-3.379999999, 4.3)))->info());
 }
 
-
 TEST(TwoDimensionalVectorTeat,Value) {
   ASSERT_EQ( -8.42 ,(new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))->a()->x());
   ASSERT_EQ( 3.42 ,(new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))->a()->y());
@@ -23,6 +22,8 @@ TEST(TwoDimensionalVectorTeat,length){
 TEST(TwoDimensionalVectorTeat,dot){
   ASSERT_EQ(15,(new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))->dot((new TwoDimensionalVector(new Point(0, 0),new Point(5, -10)))));
   ASSERT_EQ(-34,(new TwoDimensionalVector(new Point(7, 2),new Point(1, 1)))->dot((new TwoDimensionalVector(new Point(1, 1),new Point(7, -1)))));
+  ASSERT_EQ(-36,(new TwoDimensionalVector(new Point(-7, -2),new Point(-1, -1)))->dot((new TwoDimensionalVector(new Point(-1, -1),new Point(-7, -1)))));
+  ASSERT_EQ(0,(new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)))->dot((new TwoDimensionalVector(new Point(1, 1),new Point(7, -1)))));
 }
 
 TEST(TwoDimensionalVectorTeat,DotProductWithAcuteAngleShouldBePositive){
@@ -42,4 +43,7 @@ TEST(TwoDimensionalVectorTeat,DotProductWithAcuteAngleShouldBePositive){
 
 TEST(TwoDimensionalVectorTeat,cross){
   ASSERT_EQ(-14,(new TwoDimensionalVector(new Point(0, 0),new Point(1, 3)))->cross((new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))));
+  ASSERT_EQ(-14,(new TwoDimensionalVector(new Point(0, 0),new Point(-1, -3)))->cross((new TwoDimensionalVector(new Point(0, 0),new Point(-5, -1)))));
+  ASSERT_EQ(31,(new TwoDimensionalVector(new Point(5, 10),new Point(1, 3)))->cross((new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))));
+  ASSERT_EQ(0,(new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)))->cross((new TwoDimensionalVector(new Point(1, 5),new Point(5, 1)))));
 }
