@@ -21,13 +21,13 @@ public:
     double area() const override {
       double  value = M_PI *radius()*radius();
       float result = round(value * 100) / 100;
-      return result;
+      return M_PI *radius()*radius();
     }
 
     double perimeter() const override {
       double  value = 2*radius()*M_PI;
       float result = round(value * 100) / 100;
-      return result;
+      return 2*radius()*M_PI;
     }
 
     std::string info() const override {

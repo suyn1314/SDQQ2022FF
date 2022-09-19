@@ -118,12 +118,8 @@ public:
       double v2AB_x = v2bx - v2ax,  v2AB_y = v2by - v2ay;
       double _sideV1 = sqrt(  pow( v1AB_x, 2)  +  pow( v1AB_y, 2)  );
       double _sideV2 = sqrt(  pow( v2AB_x, 2)  +  pow( v2AB_y, 2)  );
-
       double sin = (v1AB_x * v2AB_y - v1AB_y * v2AB_x) / (_sideV1*_sideV2);
-      //if (sin > 0 ){return fabs(v1AB_x * v2AB_x + v1AB_y * v2AB_y);}
       return v1AB_x * v2AB_y - v1AB_y * v2AB_x;
-      //CrossProductOfTwoVectorsWithClockwiseShouldBeNegative
-      //兩個向量順時針的叉積應該是負數
     }
 
     std::string info() const {
