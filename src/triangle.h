@@ -12,6 +12,11 @@ private:
     double vAB_x,vAB_y,vAC_x,vAC_y,vBC_x,vBC_y,vCB_x,vCB_y,vCA_x,vCA_y;
 public:
     Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) : _v1(v1), _v2(v2){
+
+        //兩個向量的叉積等於零，則它們平行
+        if ((_v1->cross(_v2) == 0) || (_v2->cross(_v1) == 0)){
+          throw std::string("This is not a triangle!");
+        }
         //三角形的兩個向量應該在頭側或尾側連接,找共同點a
         // v1, v2的a點相同
         if((_v1->a()->x() == _v2->a()->x()) && (_v1->a()->y() == _v2->a()->y())){
