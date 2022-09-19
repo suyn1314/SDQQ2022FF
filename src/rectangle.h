@@ -30,15 +30,9 @@ public:
       return _widthVec->length();
     }
 
-    double area() const override {
+    double area() const override {return fabs(_lengthVec->cross(_widthVec));}
 
-      return fabs(_lengthVec->cross(_widthVec));
-    }
-
-    double perimeter() const override {
-
-      return 2*(length()+width());
-    }
+    double perimeter() const override {return 2*(length()+width());}
 
     std::string info() const override {
       return "Rectangle (" + _lengthVec->info() + ", " + _widthVec->info() + ")";

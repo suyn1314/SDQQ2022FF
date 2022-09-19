@@ -15,30 +15,26 @@ public:
         //三角形的兩個向量應該在頭側或尾側連接,找共同點a
         // v1, v2的a點相同
         if((_v1->a()->x() == _v2->a()->x()) && (_v1->a()->y() == _v2->a()->y())){
-            //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
             ax = _v1->a()->x(); ay = _v1->a()->y();
             bx = _v1->b()->x(); by = _v1->b()->y();
             cx = _v2->b()->x(); cy = _v2->b()->y();
            }
         // v1, v2的b點相同
         else if((_v1->b()->x() == _v2->b()->x()) && (_v1->b()->y() == _v2->b()->y())){
-            //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
-            ax = _v1->b()->x(); ay = _v1->b()->y();
-            bx = _v1->a()->x(); by = _v1->a()->y();
+            ax = _v1->a()->x(); ay = _v1->a()->y();
+            bx = _v1->b()->x(); by = _v1->b()->y();
             cx = _v2->a()->x(); cy = _v2->a()->y();
            }
         // v1的a與v2的b點相同
         else if((_v1->a()->x() == _v2->b()->x()) && (_v1->a()->y() == _v2->b()->y())){
-               //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
             ax = _v1->a()->x(); ay = _v1->a()->y();
             bx = _v1->b()->x(); by = _v1->b()->y();
             cx = _v2->a()->x(); cy = _v2->a()->y();
            }
         // v1的b與v2的a點相同
         else if((_v1->b()->x() == _v2->a()->x()) && (_v1->b()->y() == _v2->a()->y())){
-              //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
-            ax = _v1->b()->x(); ay = _v1->b()->y();
-            bx = _v1->a()->x(); by = _v1->a()->y();
+            ax = _v1->a()->x(); ay = _v1->a()->y();
+            bx = _v1->b()->x(); by = _v1->b()->y();
             cx = _v2->b()->x(); cy = _v2->b()->y();
             }
         else{throw std::string("This is not a triangle!");}
@@ -47,7 +43,7 @@ public:
         vAC_x = fabs( cx - ax );  vAC_y = fabs( cy - ay );
         vBC_x = fabs( cx - bx );  vBC_y = fabs( cy - by );
 
-        //定義向量大小(長度)
+        //定義向量大小(邊長)
         _sideAB = sqrt(  pow( vAB_y, 2)  +  pow( vAB_x, 2)  );
         _sideAC = sqrt(  pow( vAC_y, 2)  +  pow( vAC_x, 2)  );
         _sideBC = sqrt(  pow( vBC_y, 2)  +  pow( vBC_x, 2)  );
@@ -60,16 +56,10 @@ public:
         }
     }~Triangle() {}
 
+    //三角形面積是叉積除以2
+    double area() const override {return fabs((_v1->cross(_v2))/2);}
 
-    double area() const override {
-        //三角形面積是叉積除以2
-        //EX: _AB = (3, 0), _AC = (3, 4) , area = ( _AB * _AC ) / 2
-            return fabs((_v1->cross(_v2))/2);
-    }
-
-    double perimeter() const override {
-      return _sideAB + _sideAC + _sideBC;
-    }
+    double perimeter() const override {return _sideAB + _sideAC + _sideBC;}
 
     std::string info() const override {
       return "Triangle (" + _v1->info() + ", " + _v2->info() + ")";
