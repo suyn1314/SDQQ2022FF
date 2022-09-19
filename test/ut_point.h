@@ -14,3 +14,10 @@ TEST(PointTest,PointInfo1){
   Point point(-4.468, -3.471);
   ASSERT_EQ("(-4.47, -3.47)",point.info());
 }
+
+TEST(PointTest,PointOperator){
+  Point pointA (-4.468, -3.471);
+  ASSERT_EQ(false,( new Point(4.586, 3.471))->operator==(pointA));
+  ASSERT_EQ(true,( new Point(-4.468, -3.471))->operator==(pointA));
+
+}

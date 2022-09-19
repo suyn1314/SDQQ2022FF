@@ -23,8 +23,8 @@ Expected: true
 */
 //FIXED
     bool operator==(const Point &pt) const {
-      if (_x == pt._x && _y == pt._y){return true;}
-  	  return false;
+      return ((_x*100)/100 == (pt._x*100)/100) &&
+      ((_y*100)/100 == (pt._y*100)/100);
     }
 
     std::string info() const{
