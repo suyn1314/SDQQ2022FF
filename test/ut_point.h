@@ -2,8 +2,8 @@
 
 TEST(PointTest,PointValue){
   Point point(-4.468, -3.471);
-  ASSERT_EQ(-4.47,point.x());
-  ASSERT_EQ(-3.47,point.y());
+  ASSERT_EQ(-4.468,point.x());
+  ASSERT_EQ(-3.471,point.y());
 }
 
 TEST(PointTest,PointInfo) {

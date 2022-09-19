@@ -12,9 +12,9 @@ public:
     Point(double x, double y) : _x(x), _y(y){}
     ~Point() {}
 
-    double x() const {return round(_x*100)/100;}
+    double x() const {return _x;}
 
-    double y() const {return round(_y*100)/100;}
+    double y() const {return _y;}
 /*
 operatorTest:
 Value of: p1 == p2
