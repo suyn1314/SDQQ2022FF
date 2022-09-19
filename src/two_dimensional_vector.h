@@ -42,8 +42,8 @@ public:
       else if((v1bx == v2bx) && (v1by == v2by)){
           //相同的點為a其餘的為b,c :a(ax, ay), b(bx,by), c(cx,cy)
           ax = v1ax; ay = v1ay;
-          bx = v2ax; by = v2ay;
-          cx = v1bx; cy = v1by;
+          bx = v1bx; by = v1by;
+          cx = v2ax; cy = v2ay;
           double vAB_x = bx - ax,  vAB_y = by - ay;
           double vCB_x = bx - cx,  vCB_y = by - cy;
           return vAB_x * vCB_x + vAB_y * vCB_y;

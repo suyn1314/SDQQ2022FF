@@ -15,15 +15,19 @@ public:
     ~Circle() {}
 
     double radius() const {
-      return 0;
+      return _radiusVec->length();
     }
 
     double area() const override {
-      return 0;
+      double  value = M_PI *radius()*radius();
+      float result = round(value * 100) / 100;
+      return result;
     }
 
     double perimeter() const override {
-      return 0;
+      double  value = 2*radius()*M_PI;
+      float result = round(value * 100) / 100;
+      return result;
     }
 
     std::string info() const override {
