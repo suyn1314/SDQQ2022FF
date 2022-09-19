@@ -14,19 +14,11 @@ public:
     Circle(TwoDimensionalVector *radiusVec) : _radiusVec(radiusVec) {}
     ~Circle() {}
 
-    double radius() const {
-      return 0;
-    }
+    double radius() const {return _radiusVec->length();}
 
-    double area() const override {
-      return 0;
-    }
+    double area() const override {return M_PI *radius()*radius();}
 
-    double perimeter() const override {
-      return 0;
-    }
+    double perimeter() const override {return 2*radius()*M_PI;}
 
-    std::string info() const override {
-      return "Circle  (" + _radiusVec->info() + ")";
-    }
+    std::string info() const override {return "Circle (" + _radiusVec->info() + ")";}
 };

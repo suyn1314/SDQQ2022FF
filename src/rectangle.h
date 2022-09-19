@@ -11,26 +11,30 @@ private:
     TwoDimensionalVector *_widthVec;
 
 public:
-    Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) :_lengthVec(lengthVec) ,_widthVec(widthVec){}
-    ~Rectangle() {}
+    Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) :_lengthVec(lengthVec) ,_widthVec(widthVec){
+      //點積為0，為90度
+      if((_lengthVec->dot(_widthVec)!= 0) || (_widthVec->dot(_lengthVec)!= 0)){
+        throw std::string("This is not a rectangle!");
+      }
+    }~Rectangle() {}
 
     double length() const {
-      return 0;
+      if (_lengthVec->length() <= 0 ){
+        throw std::string("This is not a rectangle!"); }
+      return _lengthVec->length();
     }
 
     double width() const {
-      return 0;
+      if (_widthVec->length() <= 0 ){
+        throw std::string("This is not a rectangle!"); }
+      return _widthVec->length();
     }
 
-    double area() const override {
-      return 0;
-    }
+    double area() const override {return fabs(_lengthVec->cross(_widthVec));}
 
-    double perimeter() const override {
-      return 0;
-    }
+    double perimeter() const override {return 2*(length()+width());}
 
     std::string info() const override {
-      return "Rectangle  (" + _lengthVec->info() + ", " + _widthVec->info() + ")";
+      return "Rectangle (" + _lengthVec->info() + ", " + _widthVec->info() + ")";
     }
 };

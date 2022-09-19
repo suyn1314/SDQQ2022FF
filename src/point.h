@@ -15,16 +15,10 @@ public:
     double x() const {return _x;}
 
     double y() const {return _y;}
-/*
-operatorTest:
-Value of: p1 == p2
-Actual: false
-Expected: true
-*/
-//FIXED
+
     bool operator==(const Point &pt) const {
-      if (_x == pt._x && _y == pt._y){return true;}
-  	  return false;
+      return (round(_x*100)/100 == round(pt._x*100)/100) &&
+      (round(_y*100)/100 == round(pt._y*100)/100);
     }
 
     std::string info() const{
