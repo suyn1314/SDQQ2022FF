@@ -14,8 +14,7 @@ public:
     Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) :_lengthVec(lengthVec) ,_widthVec(widthVec){
       //點積為0，為90度
       if((_lengthVec->dot(_widthVec)!= 0) || (_widthVec->dot(_lengthVec)!= 0)){
-        throw std::string("This is not a rectangle!");
-      }
+        throw std::string("This is not a rectangle!");}
     }~Rectangle() {}
 
     double length() const {
