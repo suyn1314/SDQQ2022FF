@@ -66,6 +66,7 @@ public:
           double vBC_x = cx - bx,  vBC_y = cy - by;
           return vAB_x * vBC_x + vAB_y * vBC_y;
           }
+      // TODO: Dot Product With Acute Angle Should Be Positive
       //銳角的點積應該是正數
       //內積運算 : a . b = x1*x2 + y1*y2
       //四捨五入到小數後第3位

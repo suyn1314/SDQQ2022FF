@@ -12,9 +12,9 @@ public:
     Point(double x, double y) : _x(x), _y(y){}
     ~Point() {}
 
-    double x() const {return _x;}
+    double x() const {return round(_x*100)/100;}
 
-    double y() const {return _y;}
+    double y() const {return round(_y*100)/100;}
 /*
 operatorTest:
 Value of: p1 == p2
@@ -23,8 +23,8 @@ Expected: true
 */
 //FIXED
     bool operator==(const Point &pt) const {
-      return ((_x*100)/100 == (pt._x*100)/100) &&
-      ((_y*100)/100 == (pt._y*100)/100);
+      return (round(_x*100)/100 == round(pt._x*100)/100) &&
+      (round(_y*100)/100 == round(pt._y*100)/100);
     }
 
     std::string info() const{
