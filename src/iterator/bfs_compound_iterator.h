@@ -6,16 +6,31 @@
 class CompoundShape;
 
 template<class ForwardIterator>
-class BFSCompoundIterator : public Iterator
-{
+class BFSCompoundIterator : public Iterator{
+private:
+  const ForwardIterator& _begin;
+  const ForwardIterator& _end;
+  ForwardIterator _current;
 public:
-    BFSCompoundIterator(ForwardIterator begin, ForwardIterator end) {}
+    BFSCompoundIterator(ForwardIterator begin, ForwardIterator end)
+    : _begin(begin), _end(end){}
 
-    void first() override {}
+  /** Restarts the iteration. */
+    void first() override {
+      _current = _begin;
+    }
 
-    Shape* currentItem() const override {}
+    Shape* currentItem() const override {
+      if (isDone()) {throw IteratorDoneException{""};}
+      return *_current;
+    }
 
-    void next() override {}
+    void next() override {
+      if (isDone()) {throw IteratorDoneException{""};}
+      ++_current;
+    }
 
-    bool isDone() const override {}
+    bool isDone() const override {return *_current == *_end;}
+
+
 };

@@ -5,7 +5,7 @@
 #include "./ut_rectangle.h"
 #include "./ut_circle.h"
 #include "./ut_shape.h"
-
+#include "./ut_compound_shape.h"
 
 int main(int argc, char ** argv) {
     testing::InitGoogleTest(&argc, argv);
