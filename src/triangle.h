@@ -1,6 +1,7 @@
 #pragma once
 #include "shape.h"
 #include "two_dimensional_vector.h"
+#include "./iterator/null_iterator.h"
 
 class Triangle : public Shape
 {
@@ -61,7 +62,13 @@ public:
 
     double perimeter() const override {return _sideAB + _sideAC + _sideBC;}
 
-    std::string info() const override {
-      return "Triangle (" + _v1->info() + ", " + _v2->info() + ")";
-    }
+    std::string info() const override {return "Triangle (" + _v1->info() + ", " + _v2->info() + ")";}
+
+    Iterator* createDFSIterator() override {return new NullIterator();}
+
+    Iterator* createBFSIterator() override {return new NullIterator();}
+
+    void addShape(Shape* shape) override {throw std::string("Cannot do addShape!");}
+
+    void deleteShape(Shape* shape) override {throw std::string("Cannot do deleteShape!");}
 };

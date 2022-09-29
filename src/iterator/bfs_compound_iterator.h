@@ -15,18 +15,18 @@ public:
     BFSCompoundIterator(ForwardIterator begin, ForwardIterator end)
     : _begin(begin), _end(end){}
 
-  /** Restarts the iteration. */
+
     void first() override {
       _current = _begin;
     }
 
     Shape* currentItem() const override {
-      if (isDone()) {throw IteratorDoneException{""};}
+      if (isDone()) {throw std::string("isDone!");}
       return *_current;
     }
 
     void next() override {
-      if (isDone()) {throw IteratorDoneException{""};}
+      if (isDone()) {throw std::string("isDone!");}
       ++_current;
     }
 

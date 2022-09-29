@@ -3,6 +3,7 @@
 #include <string>
 #include "shape.h"
 #include "two_dimensional_vector.h"
+#include "./iterator/null_iterator.h"
 
 class Rectangle : public Shape
 {
@@ -33,7 +34,13 @@ public:
 
     double perimeter() const override {return 2*(length()+width());}
 
-    std::string info() const override {
-      return "Rectangle (" + _lengthVec->info() + ", " + _widthVec->info() + ")";
-    }
+    std::string info() const override {return "Rectangle (" + _lengthVec->info() + ", " + _widthVec->info() + ")";}
+
+    Iterator* createDFSIterator() override {return new NullIterator();}
+
+    Iterator* createBFSIterator() override {return new NullIterator();}
+
+    void addShape(Shape* shape) override {throw std::string("Cannot do addShape!");}
+
+    void deleteShape(Shape* shape) override {throw std::string("Cannot do deleteShape!");}
 };

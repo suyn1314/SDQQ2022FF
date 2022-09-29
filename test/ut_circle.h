@@ -17,3 +17,76 @@ TEST(CircleTest,CirclePerimeter) {
 TEST(CircleTest,CircleInfo) {
   ASSERT_EQ("Circle (Vector ((-4.28, 0.26), (-4.83, 0.73)))",(new Circle(new TwoDimensionalVector(new Point(-4.284, 0.264), new Point(-4.827, 0.728))))->info());
 }
+TEST(CaseCircle, CreateDFSIterator) {
+  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
+  Iterator *dfsiterator = circle->createDFSIterator();
+  // first
+  try {
+      dfsiterator->first();
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("This is Null Iterator!"), e);
+  }
+  // currentItem
+  try {
+      dfsiterator->currentItem();
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("This is Null Iterator!"), e);
+  }
+  // next
+  try {
+      dfsiterator->next();
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("This is Null Iterator!"), e);
+  }
+  // isDone
+  ASSERT_EQ(dfsiterator->isDone(),true);
+}
+
+TEST(CaseCircle, CreateBFSIterator) {
+  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
+  Iterator *dfsiterator = circle->createBFSIterator();
+  // first
+  try {
+      dfsiterator->first();
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("This is Null Iterator!"), e);
+  }
+  // currentItem
+  try {
+      dfsiterator->currentItem();
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("This is Null Iterator!"), e);
+  }
+  // next
+  try {
+      dfsiterator->next();
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("This is Null Iterator!"), e);
+  }
+  // isDone
+  ASSERT_EQ(dfsiterator->isDone(),true);
+}
+
+TEST(CircleTest, AddShapeFail) {
+    try {
+        (new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->addShape((new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(-3, -4)))));
+    }
+    catch(std::string e) {
+        ASSERT_EQ(std::string("Cannot do addShape!"), e);
+    }
+}
+
+TEST(CircleTest, DeleteShapeFail) {
+    try {
+        (new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->deleteShape((new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(-3, -4)))));
+    }
+    catch(std::string e) {
+        ASSERT_EQ(std::string("Cannot do deleteShape!"), e);
+    }
+}

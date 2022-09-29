@@ -43,11 +43,11 @@ public:
       return "CompoundShape (" + information + ")";
     }
 
-//    Iterator* createDFSIterator() override {return 0;}
+   Iterator* createDFSIterator() override {return new DFSCompoundIterator<std::list<Shape *>::const_iterator>(_shapes.begin(), _shapes.end());}
 
-//    Iterator* createBFSIterator() override {return 0;}
+   Iterator* createBFSIterator() override {return new BFSCompoundIterator<std::list<Shape *>::const_iterator>(_shapes.begin(), _shapes.end());}
 
-//    void addShape(Shape* shape) override {}
+   void addShape(Shape* shape) override {_shapes.push_back(shape);}
 
-//    void deleteShape(Shape* shape) override {}
+   void deleteShape(Shape* shape) override {_shapes.remove(shape);}
 };

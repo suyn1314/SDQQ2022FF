@@ -4,6 +4,7 @@
 #include <cmath>
 #include "two_dimensional_vector.h"
 #include "shape.h"
+#include "./iterator/null_iterator.h"
 
 class Circle : public Shape
 {
@@ -21,4 +22,12 @@ public:
     double perimeter() const override {return 2*radius()*M_PI;}
 
     std::string info() const override {return "Circle (" + _radiusVec->info() + ")";}
+
+    Iterator* createDFSIterator() override {return new NullIterator();}
+
+    Iterator* createBFSIterator() override {return new NullIterator();}
+
+    void addShape(Shape* shape) override {throw std::string("Cannot do addShape!");}
+
+    void deleteShape(Shape* shape) override {throw std::string("Cannot do deleteShape!");}
 };
