@@ -17,13 +17,9 @@ public:
 
     void first() override {_current = _begin;}
 
-    Shape* currentItem() const override {
-      if (isDone()) {throw std::string("isDone!");}
-      else{return *_current;}}
+    Shape* currentItem() const override {return *_current;}
 
-    void next() override {
-      if (isDone()) {throw std::string("isDone!");}
-      else{_current++;}}
+    void next() override {_current++;}
 
     bool isDone() const override {return _current == _end;}
 };
