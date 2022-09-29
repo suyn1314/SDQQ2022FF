@@ -8,29 +8,22 @@ class CompoundShape;
 template<class ForwardIterator>
 class BFSCompoundIterator : public Iterator{
 private:
-  const ForwardIterator& _begin;
-  const ForwardIterator& _end;
+  ForwardIterator _begin;
+  ForwardIterator _end;
   ForwardIterator _current;
 public:
     BFSCompoundIterator(ForwardIterator begin, ForwardIterator end)
-    : _begin(begin), _end(end){}
+    : _begin(begin), _end(end){first();}
 
-
-    void first() override {
-      _current = _begin;
-    }
+    void first() override {_current = _begin;}
 
     Shape* currentItem() const override {
       if (isDone()) {throw std::string("isDone!");}
-      return *_current;
-    }
+      else{return *_current;}}
 
     void next() override {
       if (isDone()) {throw std::string("isDone!");}
-      ++_current;
-    }
+      else{_current++;}}
 
-    bool isDone() const override {return *_current == *_end;}
-
-
+    bool isDone() const override {return _current == _end;}
 };
