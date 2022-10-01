@@ -13,7 +13,7 @@ private:
 
 public:
     CompoundShape(Shape **shapes, int size) : _shapes(shapes, shapes + size){
-
+      new DFSCompoundIterator<std::list<Shape *>::const_iterator>(_shapes.begin(), _shapes.end());
     }~CompoundShape() {}
 
     double area() const override {

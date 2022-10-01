@@ -1,10 +1,8 @@
 #pragma once
 #include <cmath>
-#include <set>
 #include "point.h"
 
-class TwoDimensionalVector
-{
+class TwoDimensionalVector{
 private:
     const Point *_a;
     const Point *_b;

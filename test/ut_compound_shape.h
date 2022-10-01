@@ -80,3 +80,43 @@ TEST(CompoundShapeTest, TestInfo) {
 
     delete compoundShape1, compoundShape2, compoundShape3;
 }
+
+TEST(CompoundShapeTest, TestDFS) {
+
+  Shape* rectangle1 = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+
+  Shape* rectangle2 = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+
+  Shape* triangle1 = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+
+  Shape* triangle2 = new Triangle(
+    new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
+
+  Shape* shapes1[] = {triangle1};
+  Shape* shapes2[] = {triangle2, rectangle1, rectangle2};
+  Shape* c2 = new CompoundShape(shapes1, 1);
+  Shape* c3 = new CompoundShape(shapes2, 3);
+  Shape* shapes3[] = {c2, c3};
+  Shape* c1 = new CompoundShape(shapes3, 2);
+
+  Iterator* dfs = c1->createDFSIterator();
+
+  ASSERT_EQ(6, dfs->currentItem()->area());
+
+  Iterator* tri = dfs;
+
+  ASSERT_EQ(6, tri->currentItem()->area());
+
+  dfs->next();
+
+  ASSERT_EQ(0.5 + 6 + 1, dfs->currentItem()->area());
+
+
+}

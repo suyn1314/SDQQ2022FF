@@ -13,7 +13,9 @@ private:
   ForwardIterator _current;
 public:
     BFSCompoundIterator(ForwardIterator begin, ForwardIterator end)
-    : _begin(begin), _end(end){first();}
+    : _begin(begin), _end(end){
+      first();
+    }
 
     void first() override {_current = _begin;}
 
