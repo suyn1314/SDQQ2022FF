@@ -1,91 +1,224 @@
-#include "../../src/iterator/dfs_compound_iterator.h"
+#include <gtest/gtest.h>
+
+#include <array>
+#include <list>
+#include <string>
+#include <vector>
+
+#include "../../src/circle.h"
 #include "../../src/compound_shape.h"
-#include "../../src/shape.h"
+#include "../../src/iterator/dfs_compound_iterator.h"
+#include "../../src/iterator/iterator.h"
+#include "../../src/point.h"
 #include "../../src/rectangle.h"
+#include "../../src/shape.h"
+#include "../../src/triangle.h"
+#include "../../src/two_dimensional_vector.h"
 
-#include <iostream>
+class DFSCompoundIteratorTest : public ::testing::Test {
+ protected:
+  const double DELTA = 0.001;
+  Shape* rectangle1 = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
 
-class DFSCompoundIteratorTest : public ::testing::Test
-{
-protected:
-    Point *p1, *p2, *p3, *p4;
-    TwoDimensionalVector *vec1, *vec2, *vec3;
-    CompoundShape *cs1, *cs2;
-    Iterator* it;
+  Shape* rectangle2 = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
 
-    void SetUp() override
-    {
-        p1 = new Point(0, 0);
-        p2 = new Point(0, 5);
-        p3 = new Point(5, 0);
-        p4 = new Point(0, 3);
+  Shape* triangle1 = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
 
-        vec1 = new TwoDimensionalVector(p1, p2);
-        vec2 = new TwoDimensionalVector(p1, p3);
-        vec3 = new TwoDimensionalVector(p1, p4);
-
-        cs1 = new CompoundShape();
-        cs1->addShape(new Circle(vec1));
-        cs1->addShape(new Rectangle(vec1,vec2));
-
-        cs2 = new CompoundShape();
-        cs2->addShape(new Circle(vec3));
-        cs2->addShape(cs1);
-
-        it = cs2->createDFSIterator();
-    }
-
-    void TearDown() override
-    {
-        delete cs2;
-        delete p1;
-        delete p2;
-        delete p3;
-        delete p4;
-        delete vec1;
-        delete vec2;
-        delete vec3;
-        delete it;
-    }
+  Shape* triangle2 = new Triangle(
+    new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
 };
 
-TEST_F(DFSCompoundIteratorTest, CurrentItemShouldBeCorrect)
-{
-    ASSERT_EQ(3 * 3 * M_PI, it->currentItem()->area());
+class DFSCompoundIteratorOnFlatListTest : public DFSCompoundIteratorTest {
+ protected:
+  std::list<Shape*> shapes_{&circle_, &rectangle_, &triangle_};
+  DFSCompoundIterator<decltype(shapes_)::iterator> dfs_itr_{shapes_.begin(),shapes_.end()};
+};
+
+TEST_F(DFSCompoundIteratorTest,
+       IteratingWithEmptyCompoundShapeChildShouldBeCorrect) {
+  auto compound_child = CompoundShape{{}};
+  auto compound = CompoundShape{{&compound_child}};
+
+  Iterator* itr = compound.createDFSIterator();
+  itr->first();
+
+  ASSERT_EQ(&compound_child, itr->currentItem());
+  itr->next();
+  ASSERT_TRUE(itr->isDone());
+  delete itr;
 }
 
-TEST_F(DFSCompoundIteratorTest, NextShouldBeCorrect)
-{
-    it->next();
-    ASSERT_EQ(5 * 5 * M_PI + 25, it->currentItem()->area());
+TEST_F(DFSCompoundIteratorOnFlatListTest, TestFirst) {
+  dfs_itr_.first();
+  ASSERT_EQ(&circle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
 }
 
-TEST_F(DFSCompoundIteratorTest, IsDoneShouldBeCorrect)
-{
-    it->next();
-    it->next();
-    it->next();
-    it->next();
-
-    ASSERT_TRUE(it->isDone());
+TEST_F(DFSCompoundIteratorOnFlatListTest,
+       FirstShouldBeCalledInitiallyByConstructor) {
+  ASSERT_EQ(&circle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
 }
 
-TEST_F(DFSCompoundIteratorTest, CurrentItemShouldThrowExceptionWhenIsDone)
-{
-    it->next();
-    it->next();
-    it->next();
-    it->next();
+TEST_F(DFSCompoundIteratorOnFlatListTest, TestNext) {
+  dfs_itr_.first();
 
-    ASSERT_ANY_THROW(it->next());
+  dfs_itr_.next();
+  ASSERT_EQ(&rectangle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
+  dfs_itr_.next();
+  ASSERT_EQ(&triangle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
 }
 
-TEST_F(DFSCompoundIteratorTest, NextShouldThrowExceptionWhenIsDone)
-{
-    it->next();
-    it->next();
-    it->next();
-    it->next();
-    
-    ASSERT_ANY_THROW(it->currentItem());
+TEST_F(DFSCompoundIteratorOnFlatListTest, FirstShouldRestartIteration) {
+  dfs_itr_.first();
+  dfs_itr_.next();
+  dfs_itr_.next();
+
+  dfs_itr_.first();
+
+  ASSERT_EQ(&circle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
+}
+
+TEST_F(DFSCompoundIteratorOnFlatListTest, IsDoneShouldBeFalseWhenNotEnd) {
+  dfs_itr_.first();
+  ASSERT_FALSE(dfs_itr_.isDone());
+  dfs_itr_.next();
+  ASSERT_FALSE(dfs_itr_.isDone());
+  dfs_itr_.next();
+  ASSERT_FALSE(dfs_itr_.isDone());
+}
+
+TEST_F(DFSCompoundIteratorOnFlatListTest, TestIsDoneShouldBeTrueWhenEnd) {
+  dfs_itr_.first();
+  dfs_itr_.next();
+  dfs_itr_.next();
+
+  dfs_itr_.next(); /* this one reaches the end */
+  ASSERT_TRUE(dfs_itr_.isDone());
+}
+
+TEST_F(DFSCompoundIteratorOnFlatListTest,
+       CurrentItemShouldThrowExceptionWhenEnd) {
+  dfs_itr_.first();
+  dfs_itr_.next();
+  dfs_itr_.next();
+  dfs_itr_.next();
+
+  ASSERT_TRUE(dfs_itr_.isDone());
+  ASSERT_THROW({ dfs_itr_.currentItem(); }, Iterator::IteratorDoneException)
+      << "isDone returns " << dfs_itr_.isDone() << '\n';
+}
+
+TEST_F(DFSCompoundIteratorOnFlatListTest, NextShouldThrowExceptionWhenEnd) {
+  dfs_itr_.first();
+  dfs_itr_.next();
+  dfs_itr_.next();
+  dfs_itr_.next(); /* this one already reaches the end */
+
+  ASSERT_TRUE(dfs_itr_.isDone());
+  ASSERT_THROW({ dfs_itr_.next(); }, Iterator::IteratorDoneException)
+      << "isDone returns " << dfs_itr_.isDone() << '\n';
+}
+
+class DFSCompoundIteratorOnFlatArrayTest : public DFSCompoundIteratorTest {
+ protected:
+  std::array<Shape*, 3> shapes_{&circle_, &rectangle_, &triangle_};
+  DFSCompoundIterator<decltype(shapes_)::iterator> dfs_itr_{shapes_.begin(),
+                                                            shapes_.end()};
+};
+
+TEST_F(DFSCompoundIteratorOnFlatArrayTest, TestNext) {
+  dfs_itr_.first();
+
+  dfs_itr_.next();
+  ASSERT_EQ(&rectangle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
+  dfs_itr_.next();
+  ASSERT_EQ(&triangle_, dfs_itr_.currentItem())
+      << dfs_itr_.currentItem()->info() << '\n';
+}
+
+TEST_F(DFSCompoundIteratorOnFlatArrayTest, IsDoneShouldBeFalseWhenNotEnd) {
+  dfs_itr_.first();
+  ASSERT_FALSE(dfs_itr_.isDone());
+  dfs_itr_.next();
+  ASSERT_FALSE(dfs_itr_.isDone());
+  dfs_itr_.next();
+  ASSERT_FALSE(dfs_itr_.isDone());
+}
+
+TEST_F(DFSCompoundIteratorOnFlatArrayTest, TestIsDoneShouldBeTrueWhenEnd) {
+  dfs_itr_.first();
+  dfs_itr_.next();
+  dfs_itr_.next();
+
+  dfs_itr_.next(); /* this one reaches the end */
+  ASSERT_TRUE(dfs_itr_.isDone());
+}
+
+class DFSCompoundIteratorOnCompoundShapeTest : public DFSCompoundIteratorTest {
+ protected:
+  ~DFSCompoundIteratorOnCompoundShapeTest() override {
+    delete dfs_itr_;
+  }
+
+  /*
+   *     compound_1
+   *      /      \
+   *    ci     compound_2
+   *         /     |      \
+   *       rec compound_3 tri
+   *               |
+   *              cir
+   */
+
+  CompoundShape level_three_compound_{{&circle_}};
+  CompoundShape level_two_compound_{
+      {&rectangle_, &level_three_compound_, &triangle_}};
+  CompoundShape level_one_compound_{{&circle_, &level_two_compound_}};
+  Iterator* dfs_itr_{level_one_compound_.createDFSIterator()};
+
+  std::string current_info_() const {
+    return dfs_itr_->currentItem()->info();
+  }
+};
+
+TEST_F(DFSCompoundIteratorOnCompoundShapeTest, TestFirst) {
+  dfs_itr_->first();
+
+  ASSERT_EQ(&circle_, dfs_itr_->currentItem());
+}
+
+TEST_F(DFSCompoundIteratorOnCompoundShapeTest, TestNext) {
+  dfs_itr_->first();
+
+  auto dfs_order =
+      std::vector<Shape*>{&level_two_compound_, &rectangle_,
+                          &level_three_compound_, &circle_, &triangle_};
+  for (Shape* s : dfs_order) {
+    dfs_itr_->next();
+
+    ASSERT_EQ(s, dfs_itr_->currentItem()) << current_info_() << '\n';
+  }
+}
+
+TEST_F(DFSCompoundIteratorOnCompoundShapeTest, TestIsDoneShouldBeTrueWhenEnd) {
+  dfs_itr_->first();
+  for (size_t i = 0; i < 5; i++) {
+    dfs_itr_->next();
+  }
+
+  dfs_itr_->next();
+
+  ASSERT_TRUE(dfs_itr_->isDone());
 }

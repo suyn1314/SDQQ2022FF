@@ -1,7 +1,5 @@
 #pragma once
-#include <list>
-// class Shape;
-// class CompoundShape;
+ 
 class Iterator{
 public:
     virtual ~Iterator(){};
