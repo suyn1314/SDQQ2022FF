@@ -1,3 +1,4 @@
+
 #include "../src/compound_shape.h"
 
 TEST(CompoundShapeTest, TestArea) {
@@ -176,57 +177,59 @@ TEST(CompoundShapeTest, AddShape) {
 }
 
 TEST(CompoundShapeTest, DeleteShape) {
-// 78.54
-    Shape* cir = new Circle(
-      new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
-// 1
-    Shape* rec = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
-// 4
-    Shape* rec1 = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 2)));
-// 9
-    Shape* rec2 = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(3, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-// 6
-    Shape* tri= new Triangle(
-      new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-      new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  //area 1
+      Shape* rec = new Rectangle(
+        new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
+        new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+  //area 4
+      Shape* rec1 = new Rectangle(
+        new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+        new TwoDimensionalVector(new Point(0, 0),new Point(0, 2)));
+  //area 9
+      Shape* rec2 = new Rectangle(
+        new TwoDimensionalVector(new Point(0, 0),new Point(3, 0)),
+        new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+  //area 16
+      Shape* rec3 = new Rectangle(
+        new TwoDimensionalVector(new Point(0, 0),new Point(4, 0)),
+        new TwoDimensionalVector(new Point(0, 0),new Point(0, 4)));
 
-    Shape* shapes1[] = {cir};
-    Shape* c4 = new CompoundShape(shapes1, 1);
-    c4->addShape(rec);
-    c4->addShape(tri);
-    Shape* shapes2[] = {c4,rec1};
-    Shape* c2 = new CompoundShape(shapes2, 2);
-    Shape* c3 = new CompoundShape(&rec2, 1);
-    // c3->addShape(rec2);
-    Shape* c1 = new CompoundShape(&c2, 1);
-    // c1->addShape(c2);
-    c1->addShape(c3);
-    ASSERT_NEAR(78.54 + 1 + 6, c4->area(), 0.01);
-    ASSERT_NEAR(78.54 + 1 + 6 + 4, c2->area(), 0.01);
-    ASSERT_NEAR(9, c3->area(), 0.01);
-    ASSERT_NEAR(78.54 + 1 + 6 + 4 + 9, c1->area(), 0.01);
-    /*
-    *                  c1
-    *                /    \
-    *             c2        c3
-    *            /  \         \
-    *          c4    rec1     rec2
-    *        /  |  \
-    *      cir rec tri
-    */
-    c1->deleteShape(c3);
-    //PASS
-    ASSERT_NEAR(78.54 + 1 + 6 + 4 + 0, c1->area(), 0.01);
-    c1->addShape(c3);
-    c1->deleteShape(cir);
-    //Fail
-    ASSERT_NEAR(0 + 1 + 6 + 4 + 9, c1->area(), 0.01);
+      Shape* c2 = new CompoundShape(&rec, 1);
+      c2->addShape(rec1);
+      /*
+      *             c2
+      *            /  \
+      *          rec    rec1
+      */
+      Shape* c1 = new CompoundShape(&c2, 1);
+      c1->addShape(rec2);
+      /*
+      *                c1
+      *               /  \
+      *             c2   rec2
+      *            /  \
+      *          rec    rec1
+      */
+      Shape* c0 = new CompoundShape(&rec3, 1);
+      c0->addShape(c1);
+      /*
+      *              c0
+      *             /  \
+      *     16 = rec3   c1
+      *               /  \
+      *             c2   rec2 = 9
+      *            /  \
+      *      1 = rec  rec1 = 4
+      */
+      //1+4+9+16=30
+      c0->deleteShape(rec);
+      //4+9+16=29
+      c0->deleteShape(rec1);
+      //9+16=25
+      c0->deleteShape(rec2);
+      //16
+      c0->deleteShape(c2);
+      ASSERT_EQ(16,c0->area());
 
-    delete c1;
+    delete c0;
 }

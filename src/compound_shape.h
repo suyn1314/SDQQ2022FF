@@ -1,16 +1,16 @@
 #pragma once
 
+#include "iterator/bfs_compound_iterator.h"
+#include "iterator/dfs_compound_iterator.h"
+#include "iterator/iterator.h"
 #include "shape.h"
-#include "./iterator/dfs_compound_iterator.h"
-#include "./iterator/bfs_compound_iterator.h"
-
 #include <list>
 
 class CompoundShape : public Shape
 {
 private:
     std::list<Shape *> _shapes;
-
+    std::string _id = "CompoundShape";
 public:
     CompoundShape(Shape **shapes, int size) : _shapes(shapes, shapes + size){}~CompoundShape() {}
     CompoundShape(const std::list<Shape*>& shapes) : _shapes{shapes.begin(), shapes.end()} {}
@@ -45,12 +45,16 @@ public:
 
    Iterator* createBFSIterator() override {return new BFSCompoundIterator<decltype(_shapes)::iterator>(_shapes.begin(), _shapes.end());}
 
-   void addShape(Shape* shape) override {_shapes.push_back(shape);}
+   void addShape(Shape* const shape) override {_shapes.push_back(shape);}
 
    void deleteShape(Shape* shape) override {
-     bool foundShape = false;
-     _shapes.remove_if([&shape, &foundShape](Shape *const pred) {
-             return !foundShape && (foundShape = pred == shape);
-      });
-   }
+      _shapes.remove(shape);
+      for (auto shape_ptr : _shapes) {
+        if (shape_ptr->id() == "CompoundShape") {
+                shape_ptr->deleteShape(shape);
+            }
+      }
+  }
+   std::string id() const override {return _id;}
+
 };

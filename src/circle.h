@@ -1,16 +1,15 @@
 #pragma once
 
-#include <string>
-#include <cmath>
-#include "two_dimensional_vector.h"
 #include "shape.h"
+#include "two_dimensional_vector.h"
 #include "./iterator/null_iterator.h"
+#include <cmath>
 
 class Circle : public Shape
 {
 private:
     TwoDimensionalVector *_radiusVec;
-
+    std::string _id = "Circle";
 public:
     Circle(TwoDimensionalVector *radiusVec) : _radiusVec(radiusVec) {}
     ~Circle() {}
@@ -27,7 +26,6 @@ public:
 
     Iterator* createBFSIterator() override {return new NullIterator();}
 
-    void addShape(Shape* shape) override {throw std::string("Cannot do addShape!");}
+    std::string id() const override {return _id;}
 
-    void deleteShape(Shape* shape) override {throw std::string("Cannot do deleteShape!");}
 };

@@ -10,7 +10,7 @@ class Rectangle : public Shape
 private:
     TwoDimensionalVector *_lengthVec;
     TwoDimensionalVector *_widthVec;
-
+    std::string _id = "Rectangle";
 public:
     Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) :_lengthVec(lengthVec) ,_widthVec(widthVec){
       //點積為0，為90度
@@ -40,7 +40,6 @@ public:
 
     Iterator* createBFSIterator() override {return new NullIterator();}
 
-    void addShape(Shape* shape) override {throw std::string("Cannot do addShape!");}
+    std::string id() const override {return _id;}
 
-    void deleteShape(Shape* shape) override {throw std::string("Cannot do deleteShape!");}
 };

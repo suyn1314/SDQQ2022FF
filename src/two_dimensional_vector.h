@@ -1,6 +1,7 @@
 #pragma once
-#include <cmath>
+
 #include "point.h"
+#include <cmath>
 
 class TwoDimensionalVector{
 private:

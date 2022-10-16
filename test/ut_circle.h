@@ -72,21 +72,3 @@ TEST(CaseCircle, CreateBFSIterator) {
   // isDone
   ASSERT_EQ(dfsiterator->isDone(),true);
 }
-
-TEST(CircleTest, AddShapeFail) {
-    try {
-        (new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->addShape((new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(-3, -4)))));
-    }
-    catch(std::string e) {
-        ASSERT_EQ(std::string("Cannot do addShape!"), e);
-    }
-}
-
-TEST(CircleTest, DeleteShapeFail) {
-    try {
-        (new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->deleteShape((new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(-3, -4)))));
-    }
-    catch(std::string e) {
-        ASSERT_EQ(std::string("Cannot do deleteShape!"), e);
-    }
-}

@@ -11,6 +11,7 @@ private:
     double ax, ay, bx, by, cx, cy;
     double _sideAB, _sideAC, _sideBC;
     double vAB_x,vAB_y,vAC_x,vAC_y,vBC_x,vBC_y;
+    std::string _id = "Triangle";
 public:
     Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) : _v1(v1), _v2(v2){
 
@@ -68,7 +69,5 @@ public:
 
     Iterator* createBFSIterator() override {return new NullIterator();}
 
-    void addShape(Shape* shape) override {throw std::string("Cannot do addShape!");}
-
-    void deleteShape(Shape* shape) override {throw std::string("Cannot do deleteShape!");}
+    std::string id() const override {return _id;}
 };

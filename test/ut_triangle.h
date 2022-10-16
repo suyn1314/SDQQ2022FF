@@ -56,5 +56,32 @@ TEST(TriangleTest,NotTriangle){
   }catch(std::string e){
     ASSERT_EQ("This is not a triangle!",e);
   }
+}
 
+TEST(TriangleTest, CreateBFSIterator) {
+  Shape* triangle = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  Iterator *it = triangle->createDFSIterator();
+
+  ASSERT_ANY_THROW(it->first());
+  ASSERT_ANY_THROW(it->currentItem());
+  ASSERT_ANY_THROW(it->next());
+  ASSERT_TRUE(it->isDone());
+
+  delete it;
+}
+
+TEST(TriangleTest, CreateDFSIterator) {
+  Shape* triangle = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  Iterator *it = triangle->createDFSIterator();
+
+  ASSERT_ANY_THROW(it->first());
+  ASSERT_ANY_THROW(it->currentItem());
+  ASSERT_ANY_THROW(it->next());
+  ASSERT_TRUE(it->isDone());
+  
+  delete it;
 }

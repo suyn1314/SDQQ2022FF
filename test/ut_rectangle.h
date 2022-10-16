@@ -72,3 +72,32 @@ TEST(RectangleTest,NotRectangle){
     ASSERT_EQ("This is not a rectangle!",e);
   }
 }
+
+TEST(RectangleTest, CreateBFSIterator) {
+  Shape* rectangle = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+  Iterator *it = rectangle->createBFSIterator();
+
+  ASSERT_ANY_THROW(it->first());
+  ASSERT_ANY_THROW(it->currentItem());
+  ASSERT_ANY_THROW(it->next());
+  ASSERT_TRUE(it->isDone());
+
+  delete it;
+}
+
+
+TEST(RectangleTest, CreateDFSIterator) {
+  Shape* rectangle = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+  Iterator *it = rectangle->createDFSIterator();
+  
+  ASSERT_ANY_THROW(it->first());
+  ASSERT_ANY_THROW(it->currentItem());
+  ASSERT_ANY_THROW(it->next());
+  ASSERT_TRUE(it->isDone());
+
+  delete it;
+}
