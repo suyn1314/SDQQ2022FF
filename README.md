@@ -1,11 +1,12 @@
 # Pattern Oriented Software Design 2022 Fall Assignment
 
 ## Assignment 3
+
 #### Deadline: 10/24 Tue. 23:59
 
 ### Introduction
 
-In this assignment, you are required to implement a simple algorithm of collision detection by using `Visitor pattern` and `Factory pattern`. The deadline is at 23:59, 10/24(Mon.).
+In this assignment, you are required to implement a simple algorithm of collision detection by using the `Visitor` and `Abstract Factory` patterns. The deadline is at 23:59, 10/24(Mon.).
 
 ### Problem statement
 
@@ -15,11 +16,11 @@ Collision detection is an important issue for many field such as game engine or 
 
 As shown above, the AABB of a shape surrounds the shape itself and is not rotated no matter what a shape look like. An AABB is made by two coordinates, the upper right and the lower left ones. The x and y of the upper right coordinate are the the maximum x/y of all vertices of the shape; the lower left, the minimum. For `CompoundShape`, its AABB encloses all AABBs it contains.
 
-To do the collision detection, comparing few shapes is easy; however, if there are many shapes, comparing each by each is not a good strategy. Instead of doing so, we first compose shapes to be a single tree: the adjacent shapes are grouped together using `CompoundShape`, and these compound shapes are grouped again until there is only one compound shape as the tree root. This tree is also called *AABB-tree*. Then, whenever there is a shape that needs to be detected, we put this shape into the tree to do the comparison layer by layer. The shape only goes through the branches that have collided with it. If a compound shape does not collide with it, it will not compare with the shapes in that compound shape. In this way, the number of comparisons can be greatly reduced.
+This assignment asks you to identify the shapes that collide with a target shape. The shapes are grouped in a tree structure using `CompoundShape`, which is also called *AABB-tree*, and the target shape is put into the tree to do the collision detection. Taking the advantage of the tree structure, the target shape should be compared with the shapes in tree layer by layer. The shape only goes through the branches that have collided with it, meaning that if a compound shape does not collide with it, it will not compare with the shapes in that compound shape.
 
-Collision detection is new to the `Shape` family but does not belong to the nature of shape, so we do not implement collision detection on `Shape` directly. Instead, we use `Visitor pattern` to implement the process described above in a `Visitor` called `CollisionDetector`. Each shape will be *visited* to produce their corresponding AABBs and to compare with the AABB of the shape put in. The collided shapes will be stored in a list in the visitor. In addition, to traverse an AABB tree, we need to implement a new iterator: *ListCompoundIterator*, which only returns the child shapes of a compound shape but not the grandchild shapes. We will use `Factory pattern` to bring this new iterator on `Shape` along with other existing iterators.
+We will implement the process described above by using the `Visitor` and `Abstract Factory` patterns. The detection process is implemented in a visitor called `CollisionDetector`, in which each shape will be *visited* to produce their corresponding AABBs and to compare with the AABB of the shape put in. The collided shapes will be stored in a list in the visitor. We implement the detection process in `Visitor` not in `Shape` because collision detection does not belong to the nature of shape. In addition, to traverse the AABB tree, we need to implement a new iterator: *ListCompoundIterator*, which only returns the child shapes of a compound shape but not the grandchild shapes. We will use the `Abstract Factory` pattern to bring this new iterator on `Shape` along with other existing iterators.
 
-This assignment asks you to implement the `Visitor pattern` to carry out the detection process and the `Factory pattern` to bring in a new iterator that only returns the child shapes of a compound shape.
+This assignment asks you to implement the `Visitor` pattern to carry out the detection process and the `Abstract Factory` pattern to bring in a new iterator that only returns the child shapes of a compound shape.
 
 ### File structure
 
@@ -83,20 +84,20 @@ For example, in `Circle`, the `accept` calls `visitCircle` from the visitor, in 
 2. Another new method: `getPoints` is added, which returns all vertices of the shape. This method is used to produce the AABB, because the AABB needs the vertices of the shape to calculate the maximum and minimum coordinates.
     * For `Triangle`, the method overriding just returns all vertices the triangle has.
     * For `Rectangle`, since a rectangle has only three vertices at the beginning, the method overriding should calculate the fourth vertex before returning all vertices. [To get the fourth vertex](https://stackoverflow.com/a/53392548), given two vertical vectors v1(A, B) and v2(B, C), the fourth vertex D will be A + C - B, regardless of the rotation of rectangle.
-    * For `Circle`, since a circle only has the center, the method overriding should directly calculate and return the upper right and lower right coordinates of the circle AABB.
+    * For `Circle`, since a circle only has the center, the method overriding should directly calculate and return the upper right and lower right coordinates of the AABB of the circle.
     * For `CompoundShape`, the method overriding returns all vertices of all shapes that the compound shape contains.
 
 3. `createDFSIterator` and `createBFSIterator` are replaced with `createIterator`. The `createIterator` method takes a `IteratorFactory` as an argument. The shape calls the `createIterator` of `IteratorFactory` to create an iterator. Shapes now have no way of knowing which iterator is going to be created. This depends on how the client wants to traverse the shapes. By using the `IteratorFactory` interface, if there is a new iterator in the future, the `Shape` class won't be modified again.
 
-`ShapeVisitor`: a class representing the visitor that can be applied on the `Shape` family. This class declares *visit* methods for all shapes, and each method corresponds to a shape type, such as `visitCircle` or `visitCompoundShape`. These methods take the corresponding shape class as their argument, in order to access the shape to perform the task of visitor.
+`ShapeVisitor`: a class representing the visitor that can be applied to the `Shape` family. This class declares *visit* methods for all shapes. Each method corresponds to a shape type, such as `visitCircle` or `visitCompoundShape`. These methods take the corresponding shape class as their argument, in order to access the shape to perform the task of visitor.
 
 `CollisionDetector`: a class inherited from `ShapeVisitor`. This visitor implements the collision detection algorithm with AABB. When initialized, it takes and stores a shape that needs to be detected. To start the detection, it should be accepted by a compound shape, which is the tree root.
 
 ```c++
-Shape *bullet = new Circle(...);
-Shape *target = new CompoundShape(...);
-CollisionDetector visitor = new CollisionDetector(bullet);
-target->accept(visitor);
+Shape *dart = new Triangle(...); // the target shape
+Shape *bullseyes = new CompoundShape(...); // the shapes composed of a tree structure
+CollisionDetector visitor = new CollisionDetector(dart);
+bullseyes->accept(visitor);
 std::list<Shape *> scores = visitor->collidedShapes();
 ```
 
@@ -114,7 +115,7 @@ So, if *non* of these conditions is met, we can say two boxes collide. You can u
 
 The `BoundingBox` does not inherit from `Shape`, even it looks like a rectangle, because we say the collision detection does not belong to the nature of shape. We do not want to mount any stuff related to collision detection on the `Shape` family.
 
-`IteratorFactory`: a class declaring methods for creating `Iterator`. It has two methods, one has no arguments and another has. This is because we have two types of iterator: the iterator for *Leaf*, which is `NullIterator`, and the iterators for *Composite*, which are `DFS/BFSCompoundIterator` and `ListCompoundIterator`. The iterator for *Leaf* does not need any arguments but *Composite* needs. Therefore, the *Leaf* calls the creating method without argument to create `NullIterator`, and the *Composite* calls the creating method with arguments to create `DFS/BFSCompoundIterator` or `ListCompoundIterator`.
+`IteratorFactory`: a class declaring methods for creating `Iterator`. It has two methods, one has no arguments and another has. This is because we have two types of iterator: the iterator for *Leaf*, which is `NullIterator`, and the iterators for *Composite*, which are `DFS/BFSCompoundIterator` and `ListCompoundIterator`. The iterator for *Leaf* does not need any arguments, but the ones for *Composite* need. Therefore, the *Leaf* calls the creating method without argument to create `NullIterator`, and the *Composite* calls the creating method with arguments to create `DFS/BFSCompoundIterator` or `ListCompoundIterator`.
 
 ```c++
 Shape *cir = new Circle(...);
@@ -132,7 +133,7 @@ Iterator *csit2 = cs->createIterator(new BFSIteratorFactory());
 
 Note that `DFSCompoundIterator` calls `DFSIteratorFactory` to create an iterator for the next level, and `DFSIteratorFactory` also calls the `DFSCompoundIterator` constructor. There is a circular dependency. We need to separate the factory into the header and cpp files, just like we did on the class. The same goes for `BFSCompoundIterator` and `BFSIteratorFactory`.
 
-`ListCompoundIterator`: a class inherited from `Iterator`. This iterator only traverses the child shapes of a compound shape. Take the tree below as an example, if we create a list iterator from C1, we can only get C2 and C3 from the iterator.
+`ListCompoundIterator`: a class inherited from `Iterator`. This iterator only traverses the child shapes of a compound shape. Taking the tree below as an example, if we create a list iterator from C1, we can only get C2 and C3 from the iterator.
 ```
      C1
     /   \
