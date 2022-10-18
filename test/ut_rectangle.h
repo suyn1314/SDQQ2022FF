@@ -72,6 +72,7 @@ TEST(RectangleTest,NotRectangle){
     ASSERT_EQ("This is not a rectangle!",e);
   }
 }
+<<<<<<< HEAD
 
 TEST(RectangleTest, CreateBFSIterator) {
   Shape* rectangle = new Rectangle(
@@ -101,3 +102,5 @@ TEST(RectangleTest, CreateDFSIterator) {
 
   delete it;
 }
+=======
+>>>>>>> 4320853380c6c07fe14597066a913f8c25f4735f

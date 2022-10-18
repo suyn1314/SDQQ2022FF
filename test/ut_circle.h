@@ -17,6 +17,7 @@ TEST(CircleTest,CirclePerimeter) {
 TEST(CircleTest,CircleInfo) {
   ASSERT_EQ("Circle (Vector ((-4.28, 0.26), (-4.83, 0.73)))",(new Circle(new TwoDimensionalVector(new Point(-4.284, 0.264), new Point(-4.827, 0.728))))->info());
 }
+<<<<<<< HEAD
 TEST(CaseCircle, CreateDFSIterator) {
   Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
   Iterator *dfsiterator = circle->createDFSIterator();
@@ -72,3 +73,5 @@ TEST(CaseCircle, CreateBFSIterator) {
   // isDone
   ASSERT_EQ(dfsiterator->isDone(),true);
 }
+=======
+>>>>>>> 4320853380c6c07fe14597066a913f8c25f4735f

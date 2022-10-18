@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #pragma once
 #include <exception>
 class Iterator;
@@ -29,3 +30,16 @@ public:
 
 
  };
+=======
+#pragma once
+
+class Shape
+{
+public:
+    //Polymorphism
+    virtual double area() const = 0;
+    virtual double perimeter() const = 0;
+    virtual std::string info() const = 0;
+    virtual ~Shape() {}
+};
+>>>>>>> 4320853380c6c07fe14597066a913f8c25f4735f

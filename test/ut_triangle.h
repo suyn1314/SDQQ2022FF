@@ -56,6 +56,7 @@ TEST(TriangleTest,NotTriangle){
   }catch(std::string e){
     ASSERT_EQ("This is not a triangle!",e);
   }
+<<<<<<< HEAD
 }
 
 TEST(TriangleTest, CreateBFSIterator) {
@@ -84,4 +85,7 @@ TEST(TriangleTest, CreateDFSIterator) {
   ASSERT_TRUE(it->isDone());
   
   delete it;
+=======
+
+>>>>>>> 4320853380c6c07fe14597066a913f8c25f4735f
 }
