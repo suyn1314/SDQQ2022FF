@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .PHONY: clean test
 
 all: directories ut_main
@@ -37,7 +36,6 @@ SRC = src/point.h \
 		src/visitor/shape_visitor.h \
 		src/visitor/collision_detector.h \
 
-<<<<<<< HEAD
 FACTORY = obj/dfs_iterator_factory.o \
 		obj/bfs_iterator_factory.o \
 
@@ -49,10 +47,6 @@ obj/dfs_iterator_factory.o: src/iterator/factory/dfs_iterator_factory.h src/iter
 
 obj/bfs_iterator_factory.o: src/iterator/factory/bfs_iterator_factory.h src/iterator/factory/bfs_iterator_factory.cpp
 	g++ -std=c++17 -c src/iterator/factory/bfs_iterator_factory.cpp -o obj/bfs_iterator_factory.o
-=======
-ut_main: test/ut_main.cpp $(TEST) $(SRC)
-	g++ -std=c++11 test/ut_main.cpp -o bin/ut_all -lgtest -lpthread -Wfatal-errors
->>>>>>> a50a47a4f82f9b6eaf05b7a493fcef213f1568cb
 
 directories:
 	mkdir -p bin
@@ -63,34 +57,3 @@ clean:
 
 test: all
 	bin/ut_all
-=======
-.PHONY: clean test
-
-all: directories ut_main
-
-TEST = test/ut_point.h \
-		test/ut_two_dimensional_vector.h \
-		test/ut_triangle.h \
-		test/ut_rectangle.h \
-		test/ut_circle.h \
-		test/ut_shape.h
-
-SRC = src/point.h \
-		src/two_dimensional_vector.h \
-		src/triangle.h \
-		src/rectangle.h \
-		src/circle.h \
-		src/shape.h
-
-ut_main: test/ut_main.cpp $(TEST) $(SRC)
-	g++ -std=c++17 test/ut_main.cpp -o bin/ut_all -lgtest -lpthread
-
-directories:
-	mkdir -p bin
-
-clean:
-	rm -rf bin
-
-test: all
-	bin/ut_all
->>>>>>> 4320853380c6c07fe14597066a913f8c25f4735f

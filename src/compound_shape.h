@@ -1,60 +1,108 @@
 #pragma once
 
-#include "iterator/bfs_compound_iterator.h"
-#include "iterator/dfs_compound_iterator.h"
-#include "iterator/iterator.h"
 #include "shape.h"
+#include "./iterator/factory/iterator_factory.h"
+#include "./visitor/shape_visitor.h"
+
 #include <list>
+#include <set>
 
 class CompoundShape : public Shape
 {
 private:
     std::list<Shape *> _shapes;
-    std::string _id = "CompoundShape";
+
 public:
-    CompoundShape(Shape **shapes, int size) : _shapes(shapes, shapes + size){}~CompoundShape() {}
-    CompoundShape(const std::list<Shape*>& shapes) : _shapes{shapes.begin(), shapes.end()} {}
+    CompoundShape(Shape **shapes, int size) : _shapes(shapes, shapes + size) {}
 
-    double area() const override {
-      double result = 0;
-      for (auto shape_ptr : _shapes) {
-          result += shape_ptr->area();
-      }
-      return result;
+    ~CompoundShape()
+    {
+        for (std::list<Shape *>::iterator it = _shapes.begin(); it != _shapes.end(); ++it)
+        {
+            delete *it;
+        }
+        _shapes.clear();
     }
 
-    double perimeter() const override {
-      double result = 0;
-      for (auto shape_ptr : _shapes) {
-          result += shape_ptr->perimeter();
-      }
-      return result;
+    double area() const override
+    {
+        double result = 0;
+        for (std::list<Shape *>::const_iterator it = _shapes.begin(); it != _shapes.end(); ++it)
+        {
+            result += (*it)->area();
+        }
+        return result;
     }
 
-    std::string info() const override {
-      auto information = std::string{};
-      for (const auto& shape : _shapes) {
-        information += shape->info() + ", ";
-      }
-      information.pop_back();
-      information.pop_back();
-      return "CompoundShape (" + information + ")";
+    double perimeter() const override
+    {
+        double result = 0;
+        for (std::list<Shape *>::const_iterator it = _shapes.begin(); it != _shapes.end(); ++it)
+        {
+            result += (*it)->perimeter();
+        }
+        return result;
     }
 
-   Iterator* createDFSIterator() override {return new DFSCompoundIterator<decltype(_shapes)::iterator>(_shapes.begin(), _shapes.end());}
-
-   Iterator* createBFSIterator() override {return new BFSCompoundIterator<decltype(_shapes)::iterator>(_shapes.begin(), _shapes.end());}
-
-   void addShape(Shape* const shape) override {_shapes.push_back(shape);}
-
-   void deleteShape(Shape* shape) override {
-      _shapes.remove(shape);
-      for (auto shape_ptr : _shapes) {
-        if (shape_ptr->id() == "CompoundShape") {
-                shape_ptr->deleteShape(shape);
+    std::string info() const override
+    {
+        std::string result = "CompoundShape (";
+        for (std::list<Shape *>::const_iterator it = _shapes.begin(); it != _shapes.end(); ++it)
+        {
+            result += (*it)->info();
+            if (std::next(it) != _shapes.end())
+            {
+                result += ", ";
             }
-      }
-  }
-   std::string id() const override {return _id;}
+        }
+        result += ")";
+        return result;
+    }
 
+    Iterator *createIterator(IteratorFactory *factory) override
+    {
+        return factory->createIterator(_shapes.begin(), _shapes.end());
+    }
+
+    void addShape(Shape *shape) override
+    {
+        _shapes.push_back(shape);
+    }
+
+    void deleteShape(Shape *shape) override
+    {
+        for (std::list<Shape *>::const_iterator it = _shapes.begin(); it != _shapes.end(); ++it)
+        {
+            if (*it == shape)
+            {
+                delete *it;
+                _shapes.erase(it);
+                break;
+            }
+            else
+            {
+                Iterator *shapeIt = (*it)->createIterator(
+                    new DFSIteratorFactory());
+                if (!shapeIt->isDone())
+                    (*it)->deleteShape(shape);
+                delete shapeIt;
+            }
+        }
+    }
+
+    std::set<const Point *> getPoints() override
+    {
+        std::set<const Point *> points;
+        for (std::list<Shape *>::const_iterator it = _shapes.begin(); it != _shapes.end(); ++it)
+        {
+            std::set<const Point *> s_points = (*it)->getPoints();
+            points.insert(s_points.begin(), s_points.end());
+        }
+        return points;
+    }
+
+    void accept(ShapeVisitor *visitor) override
+    {
+        visitor->visitCompoundShape(this);
+    }
 };

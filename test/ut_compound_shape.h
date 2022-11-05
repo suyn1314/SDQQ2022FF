@@ -1,235 +1,205 @@
-
+#include "../src/circle.h"
+#include "../src/rectangle.h"
 #include "../src/compound_shape.h"
+#include "../src/iterator/iterator.h"
+#include "../src/iterator/factory/dfs_iterator_factory.h"
+#include "../src/iterator/factory/bfs_iterator_factory.h"
 
-TEST(CompoundShapeTest, TestArea) {
-    Shape* circle = new Circle(
-      new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
+class CompoundShapeTest : public ::testing::Test
+{
+protected:
+    Point *p1, *p2, *p3, *p4;
+    TwoDimensionalVector *vec1, *vec2, *vec3;
+    Shape *cir1, *cir2, *rect;
+    CompoundShape *cs1, *cs2, *cs3;
 
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+    void SetUp() override
+    {
+        p1 = new Point(0, 0);
+        p2 = new Point(0, 5);
+        p3 = new Point(5, 0);
+        p4 = new Point(0, 3);
 
-    Shape* triangle = new Triangle(
-      new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-      new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+        vec1 = new TwoDimensionalVector(p1, p2);
+        vec2 = new TwoDimensionalVector(p1, p3);
+        vec3 = new TwoDimensionalVector(p1, p4);
+        cir1 = new Circle(vec1);
+        cir2 = new Circle(vec3);
+        rect = new Rectangle(vec1, vec2);
 
-    Shape* shapes1[] = {circle};
-    Shape* compoundShape1 = new CompoundShape(shapes1, 1);
-    ASSERT_NEAR(78.54 , compoundShape1->area(), 0.01);
+        Shape *sp1[] = {cir1, rect};
+        cs1 = new CompoundShape(sp1, 2);
 
-    Shape* shapes2[] = {circle, rectangle};
-    Shape* compoundShape2 = new CompoundShape(shapes2, 2);
-    ASSERT_NEAR(78.54 + 6, compoundShape2->area(), 0.01);
+        Shape *sp2[] = {cir2};
+        cs2 = new CompoundShape(sp2, 1);
 
-    Shape* shapes3[] = {circle, rectangle, triangle};
-    Shape* compoundShape3 = new CompoundShape(shapes3, 3);
-    ASSERT_NEAR(78.54 + 6 + 6, compoundShape3->area(), 0.01);
+        Shape *sp3[] = {cs1, cs2};
+        cs3 = new CompoundShape(sp3, 2);
+    }
 
-    delete compoundShape1, compoundShape2, compoundShape3;
+    void TearDown() override
+    {
+        delete cs3;
+        delete p1;
+        delete p2;
+        delete p3;
+        delete p4;
+        delete vec1;
+        delete vec2;
+        delete vec3;
+    }
+};
+
+TEST_F(CompoundShapeTest, ConstructorShouldBeCorrect)
+{
+    Shape *cir1 = new Circle(vec1);
+    Shape *cir2 = new Circle(vec3);
+    Shape *rect = new Rectangle(vec1, vec2);
+    Shape *shapes[] = {cir1, rect, cir2};
+    ASSERT_NO_THROW(CompoundShape cs(shapes, 3));
 }
 
-TEST(CompoundShapeTest, TestPerimeter) {
-    Shape* circle = new Circle(
-      new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
-
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-
-    Shape* triangle = new Triangle(
-      new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-      new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-
-    Shape* shapes1[] = {circle};
-    Shape* compoundShape1 = new CompoundShape(shapes1, 1);
-    ASSERT_NEAR(31.42 , compoundShape1->perimeter(), 0.01);
-
-    Shape* shapes2[] = {circle, rectangle};
-    Shape* compoundShape2 = new CompoundShape(shapes2, 2);
-    ASSERT_NEAR(31.42 + 10, compoundShape2->perimeter(), 0.01);
-
-    Shape* shapes3[] = {circle, rectangle, triangle};
-    Shape* compoundShape3 = new CompoundShape(shapes3, 3);
-    ASSERT_NEAR(31.42 + 10 + 12, compoundShape3->perimeter(), 0.01);
-
-    delete compoundShape1, compoundShape2, compoundShape3;
+TEST_F(CompoundShapeTest, AreaShouldBeCalculatedCorrectly)
+{
+    ASSERT_NEAR(pow(5.0, 2) * M_PI + 25, cs1->area(), 0.001);
+    ASSERT_NEAR(pow(3.0, 2) * M_PI + pow(5.0, 2) * M_PI + 25, cs3->area(), 0.001);
 }
 
-TEST(CompoundShapeTest, TestInfo) {
-    Shape* circle = new Circle(
-      new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
-
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-
-    Shape* triangle = new Triangle(
-      new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-      new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-
-    Shape* shapes1[] = {circle};
-    Shape* compoundShape1 = new CompoundShape(shapes1, 1);
-    ASSERT_EQ("CompoundShape (Circle (Vector ((0.00, 0.00), (3.00, 4.00))))" , compoundShape1->info());
-
-    Shape* shapes2[] = {circle, rectangle};
-    Shape* compoundShape2 = new CompoundShape(shapes2, 2);
-    ASSERT_EQ("CompoundShape (Circle (Vector ((0.00, 0.00), (3.00, 4.00))), Rectangle (Vector ((0.00, 0.00), (2.00, 0.00)), Vector ((0.00, 0.00), (0.00, 3.00))))", compoundShape2->info());
-
-    Shape* shapes3[] = {circle, rectangle, triangle};
-    Shape* compoundShape3 = new CompoundShape(shapes3, 3);
-    ASSERT_EQ("CompoundShape (Circle (Vector ((0.00, 0.00), (3.00, 4.00))), Rectangle (Vector ((0.00, 0.00), (2.00, 0.00)), Vector ((0.00, 0.00), (0.00, 3.00))), Triangle (Vector ((3.00, 4.00), (0.00, 0.00)), Vector ((3.00, 0.00), (0.00, 0.00))))", compoundShape3->info());
-
-    delete compoundShape1, compoundShape2, compoundShape3;
+TEST_F(CompoundShapeTest, PerimeterShouldBeCalculatedCorrectly)
+{
+    ASSERT_NEAR(10 * M_PI + 20, cs1->perimeter(), 0.001);
+    ASSERT_NEAR(10 * M_PI + 6 * M_PI + 20, cs3->perimeter(), 0.001);
 }
 
-TEST(CompoundShapeTest, TestDFS) {
+TEST_F(CompoundShapeTest, InfoShouldBeCorrectly)
+{
+    std::string result = "CompoundShape (Circle (Vector ((0.00, 0.00), (0.00, 5.00))), Rectangle (Vector ((0.00, 0.00), (0.00, 5.00)), Vector ((0.00, 0.00), (5.00, 0.00))))";
 
-  Shape* rectangle1 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+    ASSERT_EQ(result, cs1->info());
 
-  Shape* rectangle2 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+    std::string result2 = "CompoundShape (CompoundShape (Circle (Vector ((0.00, 0.00), (0.00, 5.00))), Rectangle (Vector ((0.00, 0.00), (0.00, 5.00)), Vector ((0.00, 0.00), (5.00, 0.00)))), CompoundShape (Circle (Vector ((0.00, 0.00), (0.00, 3.00)))))";
 
-  Shape* triangle1 = new Triangle(
-    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-
-  Shape* triangle2 = new Triangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
-
-  Shape* shapes1[] = {triangle1};
-  Shape* shapes2[] = {triangle2, rectangle1, rectangle2};
-  Shape* c2 = new CompoundShape(shapes1, 1);
-  Shape* c3 = new CompoundShape(shapes2, 3);
-  Shape* shapes3[] = {c2, c3};
-  Shape* c1 = new CompoundShape(shapes3, 2);
-
-  Iterator* dfs = c1->createDFSIterator();
-
-  ASSERT_EQ(6, dfs->currentItem()->area());
-
-  Iterator* tri = dfs;
-
-  ASSERT_EQ(6, tri->currentItem()->area());
+    ASSERT_EQ(result2, cs3->info());
 }
 
-TEST(CompoundShapeTest, TestBFS) {
+TEST_F(CompoundShapeTest, AddShapeCorrectly)
+{
+    Shape *shapes[] = {};
+    CompoundShape *cs = new CompoundShape(shapes, 0);
+    Circle *c1 = new Circle(vec1);
 
-  Shape* rectangle1 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+    ASSERT_NO_THROW(cs->addShape(c1));
 
-  Shape* rectangle2 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+    Iterator *it = cs->createIterator(new DFSIteratorFactory());
+    ASSERT_EQ(c1, it->currentItem());
 
-  Shape* triangle1 = new Triangle(
-    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-
-  Shape* triangle2 = new Triangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
-
-  Shape* shapes1[] = {triangle1};
-  Shape* shapes2[] = {triangle2, rectangle1, rectangle2};
-  Shape* c2 = new CompoundShape(shapes1, 1);
-  Shape* c3 = new CompoundShape(shapes2, 3);
-  Shape* shapes3[] = {c2, c3};
-  Shape* c1 = new CompoundShape(shapes3, 2);
-
-  Iterator* bfs = c1->createBFSIterator();
-
-  ASSERT_EQ(6, bfs->currentItem()->area());
-
-  Iterator* tri = bfs;
-
-  ASSERT_EQ(6, tri->currentItem()->area());
+    delete cs;
+    delete it;
 }
 
+TEST_F(CompoundShapeTest, DeleteShapeCorrectly)
+{
+    Shape *shapes[] = {};
+    CompoundShape *cs = new CompoundShape(shapes, 0);
+    Circle *c1 = new Circle(vec1);
+    Circle *c2 = new Circle(vec3);
 
-TEST(CompoundShapeTest, AddShape) {
-    Shape* circle = new Circle(
-      new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
+    cs->addShape(c1);
+    cs->addShape(c2);
+    cs->deleteShape(c2);
 
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+    Iterator *it = cs->createIterator(new DFSIteratorFactory());
+    ASSERT_EQ(c1, it->currentItem());
 
-    Shape* triangle = new Triangle(
-      new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-      new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-
-    Shape* shapes1[] = {circle};
-    Shape* compoundShape1 = new CompoundShape(shapes1, 1);
-    ASSERT_NEAR(78.54 , compoundShape1->area(), 0.01);
-    compoundShape1->addShape(rectangle);
-
-    ASSERT_NEAR(78.54 + 1, compoundShape1->area(), 0.01);
-
-    compoundShape1->addShape(triangle);
-    ASSERT_NEAR(78.54 + 1 + 6, compoundShape1->area(), 0.01);
-
-    delete compoundShape1;
+    delete cs;
+    delete it;
 }
 
-TEST(CompoundShapeTest, DeleteShape) {
-  //area 1
-      Shape* rec = new Rectangle(
-        new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
-        new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
-  //area 4
-      Shape* rec1 = new Rectangle(
-        new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-        new TwoDimensionalVector(new Point(0, 0),new Point(0, 2)));
-  //area 9
-      Shape* rec2 = new Rectangle(
-        new TwoDimensionalVector(new Point(0, 0),new Point(3, 0)),
-        new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  //area 16
-      Shape* rec3 = new Rectangle(
-        new TwoDimensionalVector(new Point(0, 0),new Point(4, 0)),
-        new TwoDimensionalVector(new Point(0, 0),new Point(0, 4)));
+TEST_F(CompoundShapeTest, DeleteInnerShapeCorrectly)
+{
+    Shape *shapes1[] = {};
+    Shape *shapes2[] = {};
+    CompoundShape *cShape = new CompoundShape(shapes1, 0);
+    CompoundShape *cShape2 = new CompoundShape(shapes2, 0);
+    Circle *c1 = new Circle(vec1);
+    Circle *c2 = new Circle(vec3);
+    Circle *c3 = new Circle(vec3);
 
-      Shape* c2 = new CompoundShape(&rec, 1);
-      c2->addShape(rec1);
-      /*
-      *             c2
-      *            /  \
-      *          rec    rec1
-      */
-      Shape* c1 = new CompoundShape(&c2, 1);
-      c1->addShape(rec2);
-      /*
-      *                c1
-      *               /  \
-      *             c2   rec2
-      *            /  \
-      *          rec    rec1
-      */
-      Shape* c0 = new CompoundShape(&rec3, 1);
-      c0->addShape(c1);
-      /*
-      *              c0
-      *             /  \
-      *     16 = rec3   c1
-      *               /  \
-      *             c2   rec2 = 9
-      *            /  \
-      *      1 = rec  rec1 = 4
-      */
-      //1+4+9+16=30
-      c0->deleteShape(rec);
-      //4+9+16=29
-      c0->deleteShape(rec1);
-      //9+16=25
-      c0->deleteShape(rec2);
-      //16
-      c0->deleteShape(c2);
-      ASSERT_EQ(16,c0->area());
+    cShape->addShape(c1);
+    cShape->addShape(c2);
+    cShape2->addShape(cShape);
+    cShape2->addShape(c3);
 
-    delete c0;
+    Iterator *it = cShape2->createIterator(new DFSIteratorFactory());
+
+    ASSERT_NEAR(5 * 5 * M_PI + 3 * 3 * M_PI * 2, cShape2->area(), 0.001);
+    cShape2->deleteShape(c2);
+    ASSERT_NEAR(5 * 5 * M_PI + +3 * 3 * M_PI, cShape2->area(), 0.001);
+
+    delete cShape2;
+    delete it;
+}
+
+TEST_F(CompoundShapeTest, DFSIteratorShouldBeCorrect)
+{
+    Iterator *it;
+    ASSERT_NO_THROW(it = cs3->createIterator(new DFSIteratorFactory()));
+    ASSERT_FALSE(it->isDone());
+
+    ASSERT_NEAR(5 * 5 * M_PI + 25, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(5 * 5 * M_PI, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(25, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(3 * 3 * M_PI, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(3 * 3 * M_PI, it->currentItem()->area(), 0.001);
+
+    ASSERT_NO_THROW(it->next());
+    ASSERT_TRUE(it->isDone());
+
+    delete it;
+}
+
+TEST_F(CompoundShapeTest, BFSIteratorShouldBeCorrect)
+{
+    Iterator *it;
+    ASSERT_NO_THROW(it = cs3->createIterator(new BFSIteratorFactory()));
+    ASSERT_FALSE(it->isDone());
+
+    ASSERT_NEAR(5 * 5 * M_PI + 25, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(3 * 3 * M_PI, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(5 * 5 * M_PI, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(25, it->currentItem()->area(), 0.001);
+    ASSERT_NO_THROW(it->next());
+    ASSERT_NEAR(3 * 3 * M_PI, it->currentItem()->area(), 0.001);
+
+    ASSERT_NO_THROW(it->next());
+    ASSERT_TRUE(it->isDone());
+
+    delete it;
+}
+
+// hw 3
+TEST_F(CompoundShapeTest, GetPointsShouldBeCorrect)
+{
+    std::set<const Point *> points = cs3->getPoints();
+    std::set<const Point *, bool (*)(const Point *, const Point *)> actualPoints(
+        points.begin(), points.end(),
+        [](const Point *p1, const Point *p2) -> bool
+        {
+            return p1->x() < p2->x() || (p1->x() == p2->x() && p1->y() < p2->y());
+        });
+    ASSERT_TRUE(actualPoints.size() == 7);
+    ASSERT_TRUE(actualPoints.find(p1) != actualPoints.end());
+    ASSERT_TRUE(actualPoints.find(p2) != actualPoints.end());
+    ASSERT_TRUE(actualPoints.find(p3) != actualPoints.end());
+    ASSERT_TRUE(actualPoints.find(new Point(5, 5)) != actualPoints.end());
+    ASSERT_TRUE(actualPoints.find(new Point(-5, -5)) != actualPoints.end());
+    ASSERT_TRUE(actualPoints.find(new Point(3, 3)) != actualPoints.end());
+    ASSERT_TRUE(actualPoints.find(new Point(-3, -3)) != actualPoints.end());
 }

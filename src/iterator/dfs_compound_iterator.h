@@ -2,63 +2,58 @@
 
 #include "iterator.h"
 #include "../shape.h"
-#include "null_iterator.h"
-#include <stack>
+#include "./factory/dfs_iterator_factory.h"
+#include <queue>
+
 
 template<class ForwardIterator>
-class DFSCompoundIterator : public Iterator{
+class DFSCompoundIterator : public Iterator
+{
 private:
-  ForwardIterator _begin, _end;
-  std::stack<Iterator*> _stack{};
-  Shape* _current = nullptr;
-  Iterator* _iterator = new NullIterator{};
-
+    std::queue<Shape*> _shapes;
 public:
-    DFSCompoundIterator(ForwardIterator begin, ForwardIterator end) : _begin(begin), _end(end){
-      first();
-    }~DFSCompoundIterator() {delete _iterator;}
-
-    void first() override {
-      _stack = std::stack<Iterator*>{};
-      if(_begin != _end){SaveTopAndCreateIterator();}}
-
-    Shape* currentItem() const override {
-      if (isDone()) {throw std::string("isDone!");}
-      else{return _current;}
-    }
-
-    void next() override {
-      if (isDone()) {throw std::string("isDone!");}
-
-      if (!IteratorIsDone()) {_iterator->next();}
-
-      if (IteratorIsDone() && !_stack.empty()) {
-        delete _iterator;//Need to delete iterator here!
-        _iterator = _stack.top();//new iterator for stack's top!
-        _stack.pop();//pop out stack top reference!
-      }
-
-      if (!IteratorIsDone()) {_current = _iterator->currentItem();}
-
-      if (IteratorIsDone() && _stack.empty()) {
-        _begin++;//Find Neighbor when stack is empty!
-        if (!isDone()) {SaveTopAndCreateIterator();}
+    DFSCompoundIterator(ForwardIterator begin, ForwardIterator end)
+    {
+        for(ForwardIterator it=begin; it!=end; it++)
+        {
+            Iterator *itt = (*it)->createIterator(new DFSIteratorFactory());
+            if(!itt->isDone())
+            {
+                _shapes.push(*it);
+                for(itt;!itt->isDone();itt->next())
+                {
+                    _shapes.push(itt->currentItem());
+                }
+            }
+            else
+            {
+                _shapes.push(*it);
+            }
         }
     }
 
-    bool isDone() const override { return ( _begin == _end ) && _iterator->isDone() && _stack.empty(); }
+    void first() override {}
 
-    bool IteratorIsDone(){return _iterator->isDone();}
-
-    void PushChildToVisit(Iterator* child){
-      if (!child->isDone()) {
-        child->first();//go first to find next level child!
-        _stack.push(child);//save this child to stack!
-      }
+    Shape* currentItem() const override
+    {
+        if(isDone())
+        {
+            throw "no current item";
+        }
+        return _shapes.front();
     }
 
-    void SaveTopAndCreateIterator(){
-      _current = *_begin;//push begin position to current!
-      PushChildToVisit((*_begin)->createDFSIterator());//Used createDFSIterator to next level!
+    void next() override
+    {
+        if(isDone())
+        {
+            throw "no current item";
+        }
+        _shapes.pop();
+    }
+
+    bool isDone() const override
+    {
+        return _shapes.size() == 0;
     }
 };

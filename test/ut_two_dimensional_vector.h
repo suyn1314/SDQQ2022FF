@@ -1,49 +1,150 @@
-#include "../src/point.h"
+#include <iostream>
 #include "../src/two_dimensional_vector.h"
-#include <gtest/gtest.h>
 
-TEST(TwoDimensionalVectorTeat,Info){
-  ASSERT_EQ("Vector ((-8.42, 3.42), (-3.38, 4.30))",(new TwoDimensionalVector(new Point(-8.419, 3.422222),new Point(-3.379999999, 4.3)))->info());
+class TwoDimensionalVectorTest : public ::testing::Test
+{
+protected:
+    Point *A, *B, *C, *D, *E, *F, *G, *H, *Z;
+
+    void SetUp() override
+    {
+        A = new Point(-8.42, 3.42);
+        B = new Point(-3.38, 4.3);
+        C = new Point(-3.62, 2.44);
+        D = new Point(-11.4686, 1.7425);
+        E = new Point(-7.9470, 1.0235);
+        F = new Point(-10, 5);
+        G = new Point(-10.15137, 3.11769);
+        H = new Point(-2.8046, 1.0046);
+        Z = new Point(0, 0);
+    }
+
+    void TearDown() override
+    {
+        delete A;
+        delete B;
+        delete C;
+        delete D;
+        delete E;
+        delete F;
+        delete G;
+        delete H;
+        delete Z;
+    }
+};
+
+TEST_F(TwoDimensionalVectorTest, ConstructorNoException)
+{
+    ASSERT_NO_THROW(TwoDimensionalVector(A, B));
+    ASSERT_NO_THROW(TwoDimensionalVector(Z, Z));
 }
 
-TEST(TwoDimensionalVectorTeat,Value) {
-  ASSERT_EQ( -8.42 ,(new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))->a()->x());
-  ASSERT_EQ( 3.42 ,(new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))->a()->y());
-  ASSERT_EQ( -3.38 ,(new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))->b()->x());
-  ASSERT_EQ( 4.3 ,(new TwoDimensionalVector(new Point(-8.42, 3.42),new Point(-3.38, 4.3)))->b()->y());
+TEST_F(TwoDimensionalVectorTest, AShouldBeCorrect)
+{
+    TwoDimensionalVector vec(A, B);
+    ASSERT_EQ(Point(-8.42, 3.42), *vec.a());
 }
 
-TEST(TwoDimensionalVectorTeat,length){
-  ASSERT_EQ(2,(new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)))->length());
-  ASSERT_EQ(4,(new TwoDimensionalVector(new Point(2, 0),new Point(-2, 0)))->length());
-  ASSERT_NEAR(13.51,(new TwoDimensionalVector(new Point(-4.3, 3.42),new Point(2.22, -8.42)))->length(),2);
+TEST_F(TwoDimensionalVectorTest, BShouldBeCorrect)
+{
+    TwoDimensionalVector vec(A, Z);
+    ASSERT_EQ(Point(0.0, 0.0), *vec.b());
 }
 
-TEST(TwoDimensionalVectorTeat,dot){
-  ASSERT_EQ(15,(new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))->dot((new TwoDimensionalVector(new Point(0, 0),new Point(5, -10)))));
-  ASSERT_EQ(-34,(new TwoDimensionalVector(new Point(7, 2),new Point(1, 1)))->dot((new TwoDimensionalVector(new Point(1, 1),new Point(7, -1)))));
-  ASSERT_EQ(-36,(new TwoDimensionalVector(new Point(-7, -2),new Point(-1, -1)))->dot((new TwoDimensionalVector(new Point(-1, -1),new Point(-7, -1)))));
-  ASSERT_EQ(0,(new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)))->dot((new TwoDimensionalVector(new Point(1, 1),new Point(7, -1)))));
+TEST_F(TwoDimensionalVectorTest, LengthShouldBeCorrect)
+{
+    TwoDimensionalVector vec1(A, B);
+    ASSERT_NEAR(5.1162, vec1.length(), 0.001);
 }
 
-TEST(TwoDimensionalVectorTeat,DotProductWithAcuteAngleShouldBePositive){
-  ASSERT_EQ(16,(
-    new TwoDimensionalVector(new Point(0, 0),new Point(4, 4)))->dot((
-    new TwoDimensionalVector(new Point(0, 0),new Point(4, 0)))));
-  ASSERT_EQ(16,(
-    new TwoDimensionalVector(new Point(0, 0),new Point(-4, -4)))->dot((
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, -4)))));
-  ASSERT_EQ(16,(
-    new TwoDimensionalVector(new Point(4, 4),new Point(0, 0)))->dot((
-    new TwoDimensionalVector(new Point(4, 0),new Point(0, 0)))));
-  ASSERT_EQ(-16,(
-    new TwoDimensionalVector(new Point(-2, 4),new Point(2, 4)))->dot((
-    new TwoDimensionalVector(new Point(2, 2),new Point(-2, 0)))));
+TEST_F(TwoDimensionalVectorTest, DotProductWithRightAngleShouldBeZero)
+{
+    TwoDimensionalVector u(A, B);
+    TwoDimensionalVector n(B, H);
+    ASSERT_NEAR(0, u.dot(&n), 0.001);
 }
 
-TEST(TwoDimensionalVectorTeat,cross){
-  ASSERT_EQ(-14,(new TwoDimensionalVector(new Point(0, 0),new Point(1, 3)))->cross((new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))));
-  ASSERT_EQ(-14,(new TwoDimensionalVector(new Point(0, 0),new Point(-1, -3)))->cross((new TwoDimensionalVector(new Point(0, 0),new Point(-5, -1)))));
-  ASSERT_EQ(31,(new TwoDimensionalVector(new Point(5, 10),new Point(1, 3)))->cross((new TwoDimensionalVector(new Point(0, 0),new Point(5, 1)))));
-  ASSERT_EQ(0,(new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)))->cross((new TwoDimensionalVector(new Point(1, 5),new Point(5, 1)))));
+TEST_F(TwoDimensionalVectorTest, DotProductWithAcuteAngleShouldBePositive)
+{
+    // same
+    TwoDimensionalVector u(A, B);
+    TwoDimensionalVector uSame(A, B);
+    ASSERT_NEAR(26.176, u.dot(&uSame), 0.001);
+    ASSERT_TRUE(u.dot(&uSame) > 0);
+    // parallel
+    TwoDimensionalVector v(A, C);
+    TwoDimensionalVector w(D, E);
+    ASSERT_NEAR(17.608, v.dot(&w), 0.001);
+    ASSERT_TRUE(v.dot(&w) > 0);
+    // acute angle (21.44 deg.)
+    ASSERT_NEAR(23.3296, u.dot(&v), 0.001);
+    ASSERT_TRUE(u.dot(&v) > 0);
+}
+
+TEST_F(TwoDimensionalVectorTest, DotProductWithObtuseAngleShouldBeNegative)
+{
+    // flat (180 deg.)
+    TwoDimensionalVector u(A, B);
+    TwoDimensionalVector e(A, G);
+    ASSERT_NEAR(-8.9921, u.dot(&e), 0.001);
+    ASSERT_TRUE(u.dot(&e) < 0);
+    // obtuse angle (125.10 deg.)
+    TwoDimensionalVector d(A, F);
+    ASSERT_NEAR(-6.5728, u.dot(&d), 0.001);
+    ASSERT_TRUE(u.dot(&d) < 0);
+}
+
+TEST_F(TwoDimensionalVectorTest, CrossProductOfTwoParallelVectorsShouldBeZero)
+{
+    // same
+    TwoDimensionalVector v(A, C);
+    TwoDimensionalVector vSame(A, C);
+    ASSERT_NEAR(0.0, v.cross(&vSame), 0.001);
+    // parallel
+    TwoDimensionalVector w(D, E);
+    ASSERT_NEAR(0.0, v.cross(&w), 0.001);
+    // flat (180 deg.)
+    TwoDimensionalVector u(A, B);
+    TwoDimensionalVector e(A, G);
+    ASSERT_NEAR(0.0, u.cross(&e), 0.001);
+}
+
+TEST_F(TwoDimensionalVectorTest, CrossProductOfTwoVectorsWithCounterclockwiseShouldBePositive)
+{
+    // acute angle
+    TwoDimensionalVector u(A, B);
+    TwoDimensionalVector v(A, C);
+    ASSERT_TRUE(v.cross(&u) > 0);
+    ASSERT_NEAR(9.1632, v.cross(&u), 0.001);
+    // right angle
+    TwoDimensionalVector n(B, H);
+    ASSERT_TRUE(n.cross(&u) > 0);
+    ASSERT_NEAR(17.1147, n.cross(&u), 0.001);
+    // obtuse angle (125.10 deg.)
+    TwoDimensionalVector d(A, F);
+    ASSERT_TRUE(v.cross(&d) > 0);
+    ASSERT_NEAR(6.0356, v.cross(&d), 0.001);
+}
+
+TEST_F(TwoDimensionalVectorTest, CrossProductOfTwoVectorsWithClockwiseShouldBeNegative)
+{
+    // acute angle (54.90 deg.)
+    TwoDimensionalVector d(A, F);
+    TwoDimensionalVector e(A, G);
+    ASSERT_TRUE(e.cross(&d) < 0);
+    ASSERT_NEAR(-3.2132, e.cross(&d), 0.001);
+    // right angle
+    TwoDimensionalVector n(B, H);
+    ASSERT_TRUE(n.cross(&e) < 0);
+    ASSERT_NEAR(-5.8793, n.cross(&e), 0.001);
+    // obtuse angle (125.10 deg.)
+    TwoDimensionalVector u(A, B);
+    ASSERT_TRUE(d.cross(&u) < 0);
+    ASSERT_NEAR(-9.3536, d.cross(&u), 0.001);
+}
+
+TEST_F(TwoDimensionalVectorTest, InfoShouldBeCorrect)
+{
+    TwoDimensionalVector u(A, B);
+    ASSERT_EQ("Vector ((-8.42, 3.42), (-3.38, 4.30))", u.info());
 }
