@@ -1,9 +1,11 @@
 #pragma once
 
-#include "iterator.h"
-#include "../shape.h"
-#include "null_iterator.h"
 #include <stack>
+
+#include "../shape.h"
+#include "factory/dfs_iterator_factory.h"
+#include "iterator.h"
+#include "null_iterator.h"
 
 template<class ForwardIterator>
 class DFSCompoundIterator : public Iterator{
@@ -12,6 +14,7 @@ private:
   std::stack<Iterator*> _stack{};
   Shape* _current = nullptr;
   Iterator* _iterator = new NullIterator{};
+   DFSIteratorFactory dfs_factory_{};
 
 public:
     DFSCompoundIterator(ForwardIterator begin, ForwardIterator end) : _begin(begin), _end(end){
@@ -59,6 +62,6 @@ public:
 
     void SaveTopAndCreateIterator(){
       _current = *_begin;//push begin position to current!
-      PushChildToVisit((*_begin)->createDFSIterator());//Used createDFSIterator to next level!
+      PushChildToVisit((*_begin)->createIterator(&dfs_factory_));//Used createDFSIterator to next level!
     }
 };

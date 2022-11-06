@@ -1,7 +1,6 @@
 #pragma once
 
-#include "iterator/bfs_compound_iterator.h"
-#include "iterator/dfs_compound_iterator.h"
+#include "iterator/factory/iterator_factory.h"
 #include "iterator/iterator.h"
 #include "shape.h"
 #include <list>
@@ -11,6 +10,7 @@ class CompoundShape : public Shape
 private:
     std::list<Shape *> _shapes;
     std::string _id = "CompoundShape";
+
 public:
     CompoundShape(Shape **shapes, int size) : _shapes(shapes, shapes + size){}~CompoundShape() {}
     CompoundShape(const std::list<Shape*>& shapes) : _shapes{shapes.begin(), shapes.end()} {}
@@ -41,9 +41,9 @@ public:
       return "CompoundShape (" + information + ")";
     }
 
-   Iterator* createDFSIterator() override {return new DFSCompoundIterator<decltype(_shapes)::iterator>(_shapes.begin(), _shapes.end());}
-
-   Iterator* createBFSIterator() override {return new BFSCompoundIterator<decltype(_shapes)::iterator>(_shapes.begin(), _shapes.end());}
+  Iterator* createIterator(IteratorFactory *factory) override {
+    return factory->createIterator(_shapes.begin(),_shapes.end());
+  }
 
    void addShape(Shape* const shape) override {_shapes.push_back(shape);}
 
@@ -56,5 +56,16 @@ public:
       }
   }
    std::string id() const override {return _id;}
+
+   void accept(ShapeVisitor* visitor) {visitor->visitCompoundShape(this);}
+
+   std::set<const Point*> getPoints() override {
+     //包含的所有形狀的所有頂點
+     std::set<const Point*> points;
+        for (auto shape : _shapes)
+            for (auto point : shape->getPoints())
+                points.insert(point);
+        return points;
+   }
 
 };

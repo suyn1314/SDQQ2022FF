@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iterator.h"
+#include <string>
 
 class NullIterator : public Iterator{
 public:

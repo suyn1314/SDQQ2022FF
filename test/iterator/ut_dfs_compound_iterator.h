@@ -1,4 +1,5 @@
 #include "../../src/iterator/dfs_compound_iterator.h"
+#include "../../src/iterator/factory/dfs_iterator_factory.h"
 #include "../../src/compound_shape.h"
 #include "../../src/shape.h"
 
@@ -8,7 +9,7 @@ protected:
     Point *p1, *p2, *p3, *p4, *p5;
     TwoDimensionalVector *vec1, *vec2, *vec3, *vec4;
     CompoundShape *c1, *c2;
-    Iterator* it;
+    Iterator *it;
 
     void SetUp() override
     {
@@ -40,7 +41,7 @@ protected:
       /    \
    tri     rec
 */
-        it = c2->createDFSIterator();
+        it = c2->createIterator(new DFSIteratorFactory());
     }
 
     void TearDown() override

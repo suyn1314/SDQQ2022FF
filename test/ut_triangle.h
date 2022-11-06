@@ -1,6 +1,10 @@
 #include "../src/point.h"
 #include "../src/two_dimensional_vector.h"
 #include "../src/triangle.h"
+#include "../src/iterator/factory/bfs_iterator_factory.h"
+#include "../src/iterator/factory/dfs_iterator_factory.h"
+#include "../src/iterator/factory/list_iterator_factory.h"
+#include "../src/iterator/iterator.h"
 
 TEST(TriangleTest,TriangleArea){
   ASSERT_EQ(6,(new Triangle(
@@ -62,7 +66,7 @@ TEST(TriangleTest, CreateBFSIterator) {
   Shape* triangle = new Triangle(
     new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
     new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-  Iterator *it = triangle->createDFSIterator();
+  Iterator *it = triangle->createIterator(new BFSIteratorFactory());
 
   ASSERT_ANY_THROW(it->first());
   ASSERT_ANY_THROW(it->currentItem());
@@ -76,12 +80,82 @@ TEST(TriangleTest, CreateDFSIterator) {
   Shape* triangle = new Triangle(
     new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
     new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
-  Iterator *it = triangle->createDFSIterator();
+  Iterator *it = triangle->createIterator(new DFSIteratorFactory());
 
   ASSERT_ANY_THROW(it->first());
   ASSERT_ANY_THROW(it->currentItem());
   ASSERT_ANY_THROW(it->next());
   ASSERT_TRUE(it->isDone());
-  
+
   delete it;
+}
+
+TEST(TriangleTest, CreateListIterator) {
+  Shape* triangle = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  Iterator *it = triangle->createIterator(new ListIteratorFactory());
+
+  ASSERT_ANY_THROW(it->first());
+  ASSERT_ANY_THROW(it->currentItem());
+  ASSERT_ANY_THROW(it->next());
+  ASSERT_TRUE(it->isDone());
+
+  delete it;
+}
+
+
+TEST(TriangleTest, AddShapeTest) {
+  Shape* triangle = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  Shape* triangle1 = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  try {
+      triangle->addShape(triangle1);
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("Could not AddShape!!"), e);
+  }
+}
+
+TEST(TriangleTest, DeleteShapeTest) {
+  Shape* triangle = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  Shape* triangle1 = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+  try {
+      triangle->deleteShape(triangle1);
+  }
+  catch(std::string e) {
+      ASSERT_EQ(std::string("Could not DeleteShape!!"), e);
+  }
+}
+
+//hw3
+TEST(TriangleTest, GetPointsTeat) {
+  Point* A = new Point(20, 13);
+  Point* B = new Point(16, 14);
+  Point* C = new Point(15, 10);
+  TwoDimensionalVector* v1 = new TwoDimensionalVector(A, B);
+  TwoDimensionalVector* v2 = new TwoDimensionalVector(B, C);
+  Shape* triangle = new Triangle(v1, v2);
+
+  std::set<const Point *> points = triangle->getPoints();
+
+  std::set<const Point *, bool (*)(const Point *, const Point *)> actualPoints(
+       points.begin(), points.end(),
+       [](const Point *p1, const Point *p2) -> bool
+       {
+           return p1->x() < p2->x() || (p1->x() == p2->x() && p1->y() < p2->y());
+       });
+  ASSERT_TRUE(actualPoints.size() == 3);
+  ASSERT_TRUE(actualPoints.find(A) != actualPoints.end());
+  ASSERT_TRUE(actualPoints.find(B) != actualPoints.end());
+  ASSERT_TRUE(actualPoints.find(C) != actualPoints.end());
+  ASSERT_FALSE(triangle->getPoints().empty());
+  ASSERT_EQ(3,triangle->getPoints().size());
 }

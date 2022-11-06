@@ -1,9 +1,11 @@
 #pragma once
 
-#include "iterator.h"
-#include "../shape.h"
-#include "null_iterator.h"
 #include <queue>
+
+#include "../shape.h"
+#include "factory/bfs_iterator_factory.h"
+#include "iterator.h"
+#include "null_iterator.h"
 
 template<class ForwardIterator>
 class BFSCompoundIterator : public Iterator{
@@ -12,6 +14,7 @@ private:
   std::queue<Iterator*> _queue{};
   Shape* _current = nullptr;
   Iterator* _iterator = new NullIterator{};
+  BFSIteratorFactory bfs_factory_{};
 
 public:
     BFSCompoundIterator(ForwardIterator begin, ForwardIterator end) : _begin(begin), _end(end){
@@ -62,6 +65,6 @@ public:
 
     void SaveTopAndCreateIterator(){
       _current = *_begin;//push top position to current!
-      PushChildToVisit((*_begin)->createBFSIterator());//Used createBFSIterator to next level!
+      PushChildToVisit((*_begin)->createIterator(&bfs_factory_));//Used createBFSIterator to next level!
     }
 };

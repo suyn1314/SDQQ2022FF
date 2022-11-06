@@ -1,64 +1,23 @@
-.PHONY: clean test
+.PHONY: dirs clean 
 
-all: directories ut_main
+CXXFLAGS = -Wfatal-errors
+SRC = $(shell ls src/*.h src/**/*.h)
+TEST = $(shell ls test/*.h test/**/*.h)
+OBJ = obj/bfs_iterator_factory.o obj/dfs_iterator_factory.o
 
-TEST = test/ut_point.h \
-		test/ut_two_dimensional_vector.h \
-		test/ut_triangle.h \
-		test/ut_rectangle.h \
-		test/ut_circle.h \
-		test/ut_shape.h \
-		test/ut_compound_shape.h \
-		test/iterator/ut_null_iterator.h \
-		test/iterator/ut_list_compound_iterator.h \
-		test/iterator/ut_dfs_compound_iterator.h \
-		test/iterator/ut_bfs_compound_iterator.h \
-		test/ut_bounding_box.h \
-		test/visitor/ut_collision_detector.h \
+all: dirs bin/ut_all
 
-SRC = src/point.h \
-		src/two_dimensional_vector.h \
-		src/triangle.h \
-		src/rectangle.h \
-		src/circle.h \
-		src/shape.h \
-		src/compound_shape.h \
-		src/iterator/iterator.h \
-		src/iterator/null_iterator.h \
-		src/iterator/list_compound_iterator.h \
-		src/iterator/dfs_compound_iterator.h \
-		src/iterator/bfs_compound_iterator.h \
-		src/iterator/factory/iterator_factory.h \
-		src/iterator/factory/bfs_iterator_factory.h \
-		src/iterator/factory/dfs_iterator_factory.h \
-		src/iterator/factory/list_iterator_factory.h \
-		src/bounding_box.h \
-		src/visitor/shape_visitor.h \
-		src/visitor/collision_detector.h \
+bin/ut_all: test/ut_main.cpp $(OBJ) $(TEST) $(SRC)
+	g++ -o $@ $< $(OBJ) -lgtest -lpthread -std=c++17 $(CXXFLAGS)
 
-<<<<<<< HEAD
-FACTORY = obj/dfs_iterator_factory.o \
-		obj/bfs_iterator_factory.o \
-
-ut_main: test/ut_main.cpp $(TEST) $(SRC) $(FACTORY)
-	g++ -std=c++17 test/ut_main.cpp $(FACTORY) -o bin/ut_all -lgtest -lpthread
-
-obj/dfs_iterator_factory.o: src/iterator/factory/dfs_iterator_factory.h src/iterator/factory/dfs_iterator_factory.cpp
-	g++ -std=c++17 -c src/iterator/factory/dfs_iterator_factory.cpp -o obj/dfs_iterator_factory.o
-
-obj/bfs_iterator_factory.o: src/iterator/factory/bfs_iterator_factory.h src/iterator/factory/bfs_iterator_factory.cpp
-	g++ -std=c++17 -c src/iterator/factory/bfs_iterator_factory.cpp -o obj/bfs_iterator_factory.o
-=======
-ut_main: test/ut_main.cpp $(TEST) $(SRC)
-	g++ -std=c++11 test/ut_main.cpp -o bin/ut_all -lgtest -lpthread -Wfatal-errors
->>>>>>> a50a47a4f82f9b6eaf05b7a493fcef213f1568cb
-
-directories:
-	mkdir -p bin
-	mkdir -p obj
-
-clean:
-	rm -rf bin obj
+obj/%.o: src/iterator/factory/%.cpp
+	g++ -o $@ -c $< -std=c++17 $(CXXFLAGS)
 
 test: all
 	bin/ut_all
+
+dirs:
+	mkdir -p bin obj
+
+clean:
+	rm -f bin/* obj/*

@@ -1,5 +1,6 @@
 #pragma once
-
+//<Interface>
+class Shape;
 class Iterator{
 public:
     virtual ~Iterator(){};

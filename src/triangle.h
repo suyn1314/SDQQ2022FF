@@ -1,7 +1,8 @@
 #pragma once
 #include "shape.h"
 #include "two_dimensional_vector.h"
-#include "./iterator/null_iterator.h"
+#include "iterator/factory/iterator_factory.h"
+#include "./visitor/shape_visitor.h"
 
 class Triangle : public Shape
 {
@@ -12,11 +13,14 @@ private:
     double _sideAB, _sideAC, _sideBC;
     double vAB_x,vAB_y,vAC_x,vAC_y,vBC_x,vBC_y;
     std::string _id = "Triangle";
+
 public:
     Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) : _v1(v1), _v2(v2){
-
         //兩個向量的叉積等於零，則它們平行
         if ((_v1->cross(_v2) == 0) || (_v2->cross(_v1) == 0)){
+          throw std::string("This is not a triangle!");
+        }
+        if (!v1->isConnected(v2)){
           throw std::string("This is not a triangle!");
         }
         //三角形的兩個向量應該在頭側或尾側連接,找共同點a
@@ -40,7 +44,6 @@ public:
             ax = _v1->a()->x(); ay = _v1->a()->y();
             bx = _v1->b()->x(); by = _v1->b()->y();
             cx = _v2->b()->x(); cy = _v2->b()->y();}
-        else{throw std::string("This is not a triangle!");}
         //定義向量座標
         vAB_x = fabs( bx - ax );  vAB_y = fabs( by - ay );
         vAC_x = fabs( cx - ax );  vAC_y = fabs( cy - ay );
@@ -51,11 +54,6 @@ public:
         _sideAC = sqrt(  pow( vAC_y, 2)  +  pow( vAC_x, 2)  );
         _sideBC = sqrt(  pow( vBC_y, 2)  +  pow( vBC_x, 2)  );
 
-        //兩邊之合不得大於等於第三邊，邊長不得為零
-        if (_sideAB + _sideAC < _sideBC ||
-        _sideBC + _sideAC < _sideAB ||
-        _sideAB + _sideBC < _sideAC ||
-        _sideAB <= 0 || _sideAC <= 0 || _sideBC <= 0 ){ throw std::string("This is not a triangle!");}
     }~Triangle() {}
 
     //三角形面積是叉積除以2
@@ -65,9 +63,19 @@ public:
 
     std::string info() const override {return "Triangle (" + _v1->info() + ", " + _v2->info() + ")";}
 
-    Iterator* createDFSIterator() override {return new NullIterator();}
+    Iterator* createIterator(IteratorFactory *factory) override {return factory->createIterator();}
 
-    Iterator* createBFSIterator() override {return new NullIterator();}
+    void addShape(Shape* const shape) override {throw std::string("Could not AddShape!!");}
+
+    void deleteShape(Shape* shape) override {throw std::string("Could not DeleteShape!!");}
 
     std::string id() const override {return _id;}
+
+    void accept(ShapeVisitor* visitor) {visitor->visitTriangle(this);};
+
+    std::set<const Point*> getPoints() override {
+      const Point common = *FindCommonPoint(*_v1, *_v2);
+      const Point uncommon = *FindUncommonPoint(*_v2, common);
+      return {new Point{_v1->head()}, new Point{_v1->tail()}, new Point{uncommon}};
+    }
 };

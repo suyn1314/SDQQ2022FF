@@ -1,5 +1,19 @@
 
+#include "../src/iterator/factory/bfs_iterator_factory.h"
+#include "../src/iterator/factory/dfs_iterator_factory.h"
+#include "../src/iterator/factory/list_iterator_factory.h"
+#include "../src/iterator/iterator.h"
+#include "../src/circle.h"
 #include "../src/compound_shape.h"
+#include "../src/point.h"
+#include "../src/rectangle.h"
+#include "../src/shape.h"
+#include "../src/triangle.h"
+#include "../src/two_dimensional_vector.h"
+
+#include <set>
+#include <string>
+#include <vector>
 
 TEST(CompoundShapeTest, TestArea) {
     Shape* circle = new Circle(
@@ -82,41 +96,38 @@ TEST(CompoundShapeTest, TestInfo) {
     delete compoundShape1, compoundShape2, compoundShape3;
 }
 
-TEST(CompoundShapeTest, TestDFS) {
+TEST(CompoundShapeTest, CreateDFSIteratorFactoryTest) {
+    Shape* rectangle1 = new Rectangle(
+      new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+      new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
 
-  Shape* rectangle1 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+    Shape* rectangle2 = new Rectangle(
+      new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
+      new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
 
-  Shape* rectangle2 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+    Shape* triangle1 = new Triangle(
+      new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+      new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
 
-  Shape* triangle1 = new Triangle(
-    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+    Shape* triangle2 = new Triangle(
+      new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
+      new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
 
-  Shape* triangle2 = new Triangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
+    Shape* shapes1[] = {triangle1};
+    Shape* shapes2[] = {triangle2, rectangle1, rectangle2};
+    Shape* c2 = new CompoundShape(shapes1, 1);
+    Shape* c3 = new CompoundShape(shapes2, 3);
+    Shape* shapes3[] = {c2, c3};
+    Shape* c1 = new CompoundShape(shapes3, 2);
 
-  Shape* shapes1[] = {triangle1};
-  Shape* shapes2[] = {triangle2, rectangle1, rectangle2};
-  Shape* c2 = new CompoundShape(shapes1, 1);
-  Shape* c3 = new CompoundShape(shapes2, 3);
-  Shape* shapes3[] = {c2, c3};
-  Shape* c1 = new CompoundShape(shapes3, 2);
+    Iterator* dfs = c1->createIterator(new DFSIteratorFactory());
 
-  Iterator* dfs = c1->createDFSIterator();
+    ASSERT_EQ(6, dfs->currentItem()->area());
 
-  ASSERT_EQ(6, dfs->currentItem()->area());
-
-  Iterator* tri = dfs;
-
-  ASSERT_EQ(6, tri->currentItem()->area());
+    delete dfs;
 }
 
-TEST(CompoundShapeTest, TestBFS) {
+TEST(CompoundShapeTest, CreateBFSIteratorFactoryTest) {
 
   Shape* rectangle1 = new Rectangle(
     new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
@@ -141,13 +152,41 @@ TEST(CompoundShapeTest, TestBFS) {
   Shape* shapes3[] = {c2, c3};
   Shape* c1 = new CompoundShape(shapes3, 2);
 
-  Iterator* bfs = c1->createBFSIterator();
+  Iterator* bfs = c1->createIterator(new BFSIteratorFactory());
 
   ASSERT_EQ(6, bfs->currentItem()->area());
 
-  Iterator* tri = bfs;
+}
 
-  ASSERT_EQ(6, tri->currentItem()->area());
+TEST(CompoundShapeTest, CreateListIteratorFactoryTest) {
+
+  Shape* rectangle1 = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
+
+  Shape* rectangle2 = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(1, 0)),
+    new TwoDimensionalVector(new Point(0, 0),new Point(0, 1)));
+
+  Shape* triangle1 = new Triangle(
+    new TwoDimensionalVector(new Point(3, 4),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(0, 0)));
+
+  Shape* triangle2 = new Triangle(
+    new TwoDimensionalVector(new Point(1, 1),new Point(0, 0)),
+    new TwoDimensionalVector(new Point(1, 0),new Point(0, 0)));
+
+  Shape* shapes1[] = {triangle1};
+  Shape* shapes2[] = {triangle2, rectangle1, rectangle2};
+  Shape* c2 = new CompoundShape(shapes1, 1);
+  Shape* c3 = new CompoundShape(shapes2, 3);
+  Shape* shapes3[] = {c2, c3};
+  Shape* c1 = new CompoundShape(shapes3, 2);
+
+  Iterator* list = c1->createIterator(new ListIteratorFactory());
+
+  ASSERT_EQ(6, list->currentItem()->area());
+
 }
 
 
@@ -231,5 +270,28 @@ TEST(CompoundShapeTest, DeleteShape) {
       c0->deleteShape(c2);
       ASSERT_EQ(16,c0->area());
 
-    delete c0;
+    delete c0, c1, c2, rec, rec1, rec2, rec3;
+}
+
+TEST(CompoundShapeTest, GetPointsTeat) {
+  //return 4 Point
+  Shape* rec = new Rectangle(
+    new TwoDimensionalVector(new Point(0, 0),new Point(3, 0)),
+    new TwoDimensionalVector(new Point(3, 0),new Point(3, 4)));
+  //return 3 Point
+  Shape* tri = new Triangle(
+    new TwoDimensionalVector(new Point(2, 2),new Point(5, 2)),
+    new TwoDimensionalVector(new Point(5, 2),new Point(5, 6)));
+  //return 2 Point
+  Shape* cri = new Circle(
+    new TwoDimensionalVector(new Point(1, 1),new Point(1, 0)));
+
+  Shape* shapes[] = {rec, tri, cri};
+  CompoundShape* compoundShape = new CompoundShape(shapes, 3);
+
+  std::set<const Point *> compoundShapePoints = compoundShape->getPoints();
+
+  int expectedSize = rec->getPoints().size() + tri->getPoints().size() + cri->getPoints().size();
+  ASSERT_EQ(expectedSize, compoundShapePoints.size());
+  ASSERT_EQ(9, compoundShapePoints.size());
 }

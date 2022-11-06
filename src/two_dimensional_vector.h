@@ -16,6 +16,10 @@ public:
 
     const Point *b() const {return _b;}
 
+    Point head() const {return *_a;}
+
+    Point tail() const {return *_b;}
+
     double length() const {
       double ax = _a->x(), ay = _a->y(), bx = _b->x() ,by = _b->y();
       //向量長度公式:|v| = sqrt(x^2 + y^2)
@@ -43,7 +47,26 @@ public:
       return v1AB_x * v2AB_y - v1AB_y * v2AB_x;
     }
 
+    const bool isConnected(TwoDimensionalVector *other) const{
+        return *_a == *(other->a()) || *_a == *(other->b()) || *_b == *(other->a()) || *_b == *(other->b());
+    }
+
     std::string info() const {
       return "Vector (" + _a->info() + ", " + _b->info() + ")";
     }
 };
+
+bool HasCommon(const Point& point, const TwoDimensionalVector& vector) {
+  return point == vector.head() || point == vector.tail();
+}
+
+const Point* FindCommonPoint(const TwoDimensionalVector& v1, const TwoDimensionalVector& v2) {
+  bool v1Head = HasCommon(v1.head(), v2);
+  bool v1Tail = HasCommon(v1.tail(), v2);
+  if (!v1Head && !v1Tail) { return nullptr;}
+  return v1Head ? v1.a() : v1.b();
+}
+
+const Point* FindUncommonPoint(const TwoDimensionalVector& vector, const Point& common_point) {
+  return vector.tail() == common_point ? vector.a() : vector.b();
+}

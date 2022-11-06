@@ -1,15 +1,15 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
-class Point
-{
+class Point{
 private:
-     const double _x;
-     const double _y;
+    double _x;
+    double _y;
 
 public:
-    Point(double x, double y) : _x(x), _y(y){}
+    Point(double const x, double const y) : _x(x), _y(y){}
     ~Point() {}
 
     double x() const {return _x;}
