@@ -35,7 +35,7 @@ protected:
         Shape *sp2[] = {cir2, cs1};
         cs2 = new CompoundShape(sp2, 2);
 
-        it = cs2->createIterator(new BFSStepIteratorFactory());
+        it = cs2->createIterator(BFSStepIteratorFactory::getInstance());
     }
 
     void TearDown() override
@@ -97,7 +97,7 @@ TEST_F(BFSStepCompoundIteratorTest, BFSOrderShouldBeCorrectIfNoChildrenInCompoun
 {
     Shape *sps[] = {};
     Shape *cs = new CompoundShape(sps, 0);
-    Iterator *it = cs->createIterator(new BFSStepIteratorFactory());
+    Iterator *it = cs->createIterator(BFSStepIteratorFactory::getInstance());
     ASSERT_TRUE(it->isDone());
     ASSERT_ANY_THROW(it->currentItem());
     ASSERT_ANY_THROW(it->next());
@@ -110,7 +110,7 @@ TEST_F(BFSStepCompoundIteratorTest, BFSOrderShouldBeCorrectIfACircleInCompound)
     Shape *cir = new Circle(vec1);
     Shape *sps[] = {cir};
     Shape *cs = new CompoundShape(sps, 1);
-    Iterator *it = cs->createIterator(new BFSStepIteratorFactory());
+    Iterator *it = cs->createIterator(BFSStepIteratorFactory::getInstance());
     ASSERT_FALSE(it->isDone());
     ASSERT_EQ(it->currentItem(), cir);
     ASSERT_NO_THROW(it->next());
@@ -130,7 +130,7 @@ TEST_F(BFSStepCompoundIteratorTest, BFSOrderShouldBeCorrectWithMultipleCompoundS
     Shape *cs3 = new CompoundShape(sps3, 2);
     Shape *sps4[] = {cs3};
     Shape *cs4 = new CompoundShape(sps4, 1);
-    Iterator *it = cs4->createIterator(new BFSStepIteratorFactory());
+    Iterator *it = cs4->createIterator(BFSStepIteratorFactory::getInstance());
     ASSERT_FALSE(it->isDone());
     ASSERT_EQ(it->currentItem(), cs3);
     ASSERT_EQ(it->currentItem(), cs3);
@@ -168,7 +168,7 @@ TEST_F(BFSStepCompoundIteratorTest, BFSOrderShouldBeCorrectWithComplicatedTreeSt
     Shape *cs3 = new CompoundShape(sps3, 2);
     Shape *sps4[] = {cs3, cir4};
     Shape *cs4 = new CompoundShape(sps4, 2);
-    Iterator *it = cs4->createIterator(new BFSStepIteratorFactory());
+    Iterator *it = cs4->createIterator(BFSStepIteratorFactory::getInstance());
     ASSERT_FALSE(it->isDone());
     ASSERT_EQ(it->currentItem(), cs3);
     ASSERT_EQ(it->currentItem(), cs3);

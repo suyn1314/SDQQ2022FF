@@ -1,14 +1,17 @@
+#include "../../src/shape.h"
+#include "../../src/circle.h"
+#include "../../src/rectangle.h"
+#include "../../src/compound_shape.h"
 #include "../../src/iterator/list_compound_iterator.h"
 #include "../../src/iterator/factory/list_iterator_factory.h"
-#include "../../src/compound_shape.h"
-#include "../../src/shape.h"
 
 class ListCompoundIteratorTest : public ::testing::Test
 {
 protected:
-    Point *p1, *p2, *p3, *p4, *p5;
-    TwoDimensionalVector *vec1, *vec2, *vec3, *vec4;
-    CompoundShape *c1, *c2;
+    Point *p1, *p2, *p3, *p4;
+    TwoDimensionalVector *vec1, *vec2, *vec3;
+    Shape *cir1, *cir2, *rect;
+    CompoundShape *cs1, *cs2;
     Iterator *it;
 
     void SetUp() override
@@ -17,73 +20,72 @@ protected:
         p2 = new Point(0, 5);
         p3 = new Point(5, 0);
         p4 = new Point(0, 3);
-        p5 = new Point(3, 0);
 
-        vec1 = new TwoDimensionalVector(p1, p2);//(0, 0)(0, 5)
-        vec2 = new TwoDimensionalVector(p1, p3);//(0, 0)(5, 0)
-        vec3 = new TwoDimensionalVector(p1, p4);//(0, 0)(0, 3)
-        vec4 = new TwoDimensionalVector(p1, p5);//(0, 0)(3, 0)
+        vec1 = new TwoDimensionalVector(*p1, *p2);
+        vec2 = new TwoDimensionalVector(*p1, *p3);
+        vec3 = new TwoDimensionalVector(*p1, *p4);
 
-        Shape* tri = new Triangle(vec3,vec4); //4.5
-        Shape* rec = new Rectangle(vec1,vec2);//25
-        Shape* cri = new Circle(vec3);       //3*3*M_PI
+        cir1 = new Circle(*vec1);
+        cir2 = new Circle(*vec3);
+        rect = new Rectangle(*vec1, *vec2);
 
-        Shape* c1 = new CompoundShape(&tri, 1);
-        c1->addShape(rec);
+        Shape *shapes1[] = {cir1, rect};
+        cs1 = new CompoundShape(shapes1, 2);
 
+        Shape *shapes2[] = {cir2, cs1};
+        cs2 = new CompoundShape(shapes2, 2);
 
-        Shape* c2 = new CompoundShape(&c1, 1);
-        c2->addShape(cri);
-/*
-           c2
-          /   \
-        c1    cri
-      /    \
-   tri     rec
-*/
-        it = c2->createIterator(new ListIteratorFactory());
+        it = cs1->createIterator(IteratorFactory::getInstance("List"));
     }
 
     void TearDown() override
     {
         delete it;
-        delete c1, c2;
-        delete p1, p2, p3, p4, p5;
-        delete vec1, vec2, vec3, vec4;
+        delete cs2;
+        delete p1;
+        delete p2;
+        delete p3;
+        delete p4;
+        delete vec1;
+        delete vec2;
+        delete vec3;
     }
 };
 
 TEST_F(ListCompoundIteratorTest, CurrentItemShouldBeCorrect)
 {
-    ASSERT_EQ(4.5 + 25, it->currentItem()->area());
+    ASSERT_EQ(cir1, it->currentItem());
+    ASSERT_EQ(cir1, it->currentItem());
 }
 
 TEST_F(ListCompoundIteratorTest, NextShouldBeCorrect)
 {
-    it->next();
-    ASSERT_EQ(3 * 3 * M_PI, it->currentItem()->area());
+    ASSERT_EQ(cir1, it->currentItem());
+    ASSERT_NO_THROW(it->next());
+    ASSERT_EQ(rect, it->currentItem());
 }
 
 TEST_F(ListCompoundIteratorTest, IsDoneShouldBeCorrect)
 {
-    it->next();
-    it->next();
-
+    ASSERT_FALSE(it->isDone());
+    ASSERT_NO_THROW(it->next());
+    ASSERT_FALSE(it->isDone());
+    ASSERT_NO_THROW(it->next());
+    ASSERT_ANY_THROW(it->currentItem());
+    ASSERT_ANY_THROW(it->next());
     ASSERT_TRUE(it->isDone());
 }
 
-TEST_F(ListCompoundIteratorTest, CurrentItemShouldThrowExceptionWhenIsDone)
+TEST_F(ListCompoundIteratorTest, DeeperShapesShouldNotBeReturned)
 {
-    it->next();
-    it->next();
+    Iterator *lit = cs2->createIterator(IteratorFactory::getInstance("List"));
+    ASSERT_EQ(cir2, lit->currentItem());
+    ASSERT_NO_THROW(lit->next());
+    ASSERT_EQ(cs1, lit->currentItem());
+    ASSERT_NO_THROW(lit->next());
+    ASSERT_TRUE(lit->isDone());
+    ASSERT_ANY_THROW(lit->next());
+    ASSERT_ANY_THROW(lit->currentItem());
 
-    ASSERT_ANY_THROW(it->currentItem());
-}
-
-TEST_F(ListCompoundIteratorTest, NextShouldThrowExceptionWhenIsDone)
-{
-    it->next();
-    it->next();
-
-    ASSERT_ANY_THROW(it->next());
+    delete lit;
 }

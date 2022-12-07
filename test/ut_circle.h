@@ -1,98 +1,126 @@
-#include "../src/point.h"
-#include "../src/two_dimensional_vector.h"
+#include <cmath>
 #include "../src/circle.h"
-#include "../src/iterator/factory/bfs_iterator_factory.h"
-#include "../src/iterator/factory/dfs_iterator_factory.h"
-#include "../src/iterator/factory/list_iterator_factory.h"
 #include "../src/iterator/iterator.h"
-#include <set>
+#include "../src/iterator/factory/dfs_iterator_factory.h"
+#include "../src/iterator/factory/bfs_iterator_factory.h"
 
-TEST(CircleTest,CircleRadius){
-  ASSERT_EQ(5,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->radius());
-  ASSERT_EQ(5,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(-3, -4))))->radius());
-  ASSERT_NEAR(16.12,(new Circle(new TwoDimensionalVector(new Point(-5, -10), new Point(3, 4))))->radius(),0.1);
-  ASSERT_NEAR(9.21,(new Circle(new TwoDimensionalVector(new Point(-1, -1), new Point(-7, -8))))->radius(),0.1);
-}
-TEST(CircleTest,CircleArea) {
-  ASSERT_NEAR(78.54,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->area(),0.1);
-}
-TEST(CircleTest,CirclePerimeter) {
-  ASSERT_NEAR(31.42,(new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4))))->perimeter(),0.1);
-}
-TEST(CircleTest,CircleInfo) {
-  ASSERT_EQ("Circle (Vector ((-4.28, 0.26), (-4.83, 0.73)))",(new Circle(new TwoDimensionalVector(new Point(-4.284, 0.264), new Point(-4.827, 0.728))))->info());
-}
+class CircleTest : public ::testing::Test
+{
+protected:
+    Point *K, *L;
+    TwoDimensionalVector *r;
 
-TEST(CircleTest, AddShapeTest) {
-  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
-  Shape* circle1 = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
+    void SetUp() override
+    {
+        K = new Point(14, 2);
+        L = new Point(18, -4);
+        r = new TwoDimensionalVector(*K, *L);
+    }
 
-  try {
-      circle->addShape(circle1);
-  }
-  catch(std::string e) {
-      ASSERT_EQ(std::string("Could not AddShape!!"), e);
-  }
-}
+    void TearDown() override
+    {
+        delete K;
+        delete L;
+        delete r;
+    }
+};
 
-TEST(CircleTest, DeleteShapeTest) {
-  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
-  Shape* circle1 = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(3, 4)));
-  try {
-      circle->deleteShape(circle1);
-  }
-  catch(std::string e) {
-      ASSERT_EQ(std::string("Could not DeleteShape!!"), e);
-  }
+TEST_F(CircleTest, LegalCircle)
+{
+    ASSERT_NO_THROW(Circle cir(*r));
 }
 
-TEST(CircleTest, CreateBFSIteratorFactoryTest) {
-  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(0, 1)));
-  Iterator *it = circle->createIterator(new BFSIteratorFactory());
-  ASSERT_TRUE(it->isDone());
-  delete it;
+TEST_F(CircleTest, RadiusShouldBeCorrect)
+{
+    ASSERT_NEAR(7.2111, Circle(*r).radius(), 0.001);
 }
 
-TEST(CircleTest, CreateDFSIteratorFactoryTest) {
-  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(0, 1)));
-  Iterator *it = circle->createIterator(new DFSIteratorFactory());
-  ASSERT_TRUE(it->isDone());
-  delete it;
+TEST_F(CircleTest, AreaShouldBeCorrect)
+{
+    ASSERT_NEAR(pow(7.2111, 2) * M_PI, Circle(*r).area(), 0.001);
 }
 
-TEST(CircleTest, CreateListIteratorFactoryTest) {
-  Shape* circle = new Circle(new TwoDimensionalVector(new Point(0, 0), new Point(0, 1)));
-  Iterator *it = circle->createIterator(new ListIteratorFactory());
-  ASSERT_TRUE(it->isDone());
-  delete it;
+TEST_F(CircleTest, PerimeterShouldBeCorrect)
+{
+    ASSERT_NEAR(2 * M_PI * 7.2111, Circle(*r).perimeter(), 0.001);
 }
 
-//hw3
-TEST(CircleTest, GetPointsTeat) {
-  Point*  A = new Point(14, 2);
-  Point*  B = new Point(18, -4);
-  TwoDimensionalVector*  v1 = new TwoDimensionalVector(A, B);
-  Shape* circle = new Circle(v1);
+TEST_F(CircleTest, InfoShouldBeCorrect)
+{
+    Circle cir(*r);
+    ASSERT_EQ("Circle (Vector ((14.00, 2.00), (18.00, -4.00)))", cir.info());
+}
 
-  double radius = v1->length();
+// hw 2
+TEST_F(CircleTest, AddShapeShouldThrowException)
+{
+    Circle cir(*r);
+    Shape *s = new Circle(*r);
 
-  std::set<const Point *> points = circle->getPoints();
-  std::set<const Point *, bool (*)(const Point *, const Point *)> actualPoints(
-      points.begin(), points.end(),
-      [](const Point *p1, const Point *p2) -> bool
-      {
-          return p1->x() < p2->x() || (p1->x() == p2->x() && p1->y() < p2->y());
-      });
+    ASSERT_ANY_THROW(cir.addShape(s));
 
-  ASSERT_TRUE(actualPoints.size() == 2);
+    delete s;
+}
 
-  const Point * pMax = new Point(A->x() + radius, A->y() + radius);
-  const Point * pMin = new Point(A->x() - radius, A->y() - radius);
+TEST_F(CircleTest, DeleteShapeShouldThrowException)
+{
+    Circle cir(*r);
+    Shape *s = new Circle(*r);
 
-  ASSERT_TRUE(actualPoints.find(pMax) != actualPoints.end());
-  ASSERT_TRUE(actualPoints.find(pMin) != actualPoints.end());
-  ASSERT_TRUE(actualPoints.find(new Point(A->x() + radius, A->y() - radius)) == actualPoints.end());
-  ASSERT_TRUE(actualPoints.find(new Point(A->x() - radius, A->y() + radius)) == actualPoints.end());
-  ASSERT_FALSE(circle->getPoints().empty());
-  ASSERT_EQ(2,circle->getPoints().size());
+    ASSERT_ANY_THROW(cir.deleteShape(s));
+
+    delete s;
+}
+
+TEST_F(CircleTest, CurrentItemOfDFSIteratorShouldThrowException)
+{
+    Circle cir(*r);
+    Iterator *it = cir.createIterator(IteratorFactory::getInstance("DFS"));
+    ASSERT_ANY_THROW(it->currentItem());
+
+    delete it;
+}
+
+TEST_F(CircleTest, IsDoneOfDFSIteratorShouldReturnTrue)
+{
+    Circle cir(*r);
+    Iterator *it = cir.createIterator(IteratorFactory::getInstance("DFS"));
+    ASSERT_TRUE(it->isDone());
+
+    delete it;
+}
+
+TEST_F(CircleTest, CurrentItemOfBFSIteratorShouldThrowException)
+{
+    Circle cir(*r);
+    Iterator *it = cir.createIterator(IteratorFactory::getInstance("BFS"));
+    ASSERT_ANY_THROW(it->currentItem());
+
+    delete it;
+}
+
+TEST_F(CircleTest, IsDoneOfBFSIteratorShouldReturnTrue)
+{
+    Circle cir(*r);
+    Iterator *it = cir.createIterator(IteratorFactory::getInstance("BFS"));
+    ASSERT_TRUE(it->isDone());
+
+    delete it;
+}
+
+// hw 3
+TEST_F(CircleTest, getPointsShouldBeCorrect)
+{
+    double radius = r->length();
+    Circle cir(*r);
+    std::set<Point> points = cir.getPoints();
+    ASSERT_TRUE(points.size() == 2);
+    Point pMax(K->x() + radius, K->y() + radius);
+    Point pMin(K->x() - radius, K->y() - radius);
+    ASSERT_TRUE(points.find(pMax) != points.end());
+    ASSERT_TRUE(points.find(pMin) != points.end());
+    Point lowerright(K->x() + radius, K->y() - radius);
+    Point upperleft(K->x() - radius, K->y() + radius);
+    ASSERT_TRUE(points.find(lowerright) == points.end());
+    ASSERT_TRUE(points.find(upperleft) == points.end());
 }

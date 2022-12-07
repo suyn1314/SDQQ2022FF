@@ -1,39 +1,45 @@
 #pragma once
 
-#include "../shape.h"
-#include "iterator.h"
+#include "./iterator.h"
+#include <queue>
+
 
 template <class ForwardIterator>
-class ListCompoundIterator : public Iterator {
- private:
- ForwardIterator _begin, _end, _current;
+class ListCompoundIterator : public Iterator
+{
+private:
+    std::queue<Shape *> _shapes;
 
- public:
-  ListCompoundIterator(const ForwardIterator& begin, const ForwardIterator& end): _begin{begin}, _end{end}, _current{begin} {}
-
-  void first() override {
-    if (isDone()) {
-      throw std::string("isDone!");;
+public:
+    ListCompoundIterator(ForwardIterator begin, ForwardIterator end)
+    {
+        for (ForwardIterator it = begin; it != end; it++)
+        {
+            _shapes.push(*it);
+        }
     }
-    _current = _begin;
-  }
+    void first() override {}
 
-  void next() override {
-    if (isDone()) {
-      throw std::string("isDone!");;
+    Shape *currentItem() const override
+    {
+        if (isDone())
+        {
+            throw "no current item";
+        }
+        return _shapes.front();
     }
-    ++_current;
-  }
 
-  Shape* currentItem() const {
-    if (isDone()) {
-      throw std::string("isDone!");;
+    void next() override
+    {
+        if (isDone())
+        {
+            throw "no current item";
+        }
+        _shapes.pop();
     }
-    return *_current;
-  }
 
-  bool isDone() const {
-    return _current == _end;
-  }
-
+    bool isDone() const override
+    {
+        return _shapes.size() == 0;
+    }
 };

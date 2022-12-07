@@ -1,81 +1,101 @@
 #pragma once
+
+#include <string>
+#include <set>
 #include "shape.h"
 #include "two_dimensional_vector.h"
-#include "iterator/factory/iterator_factory.h"
+#include "./iterator/factory/iterator_factory.h"
 #include "./visitor/shape_visitor.h"
 
 class Triangle : public Shape
 {
 private:
-    TwoDimensionalVector *_v1;
-    TwoDimensionalVector *_v2;
-    double ax, ay, bx, by, cx, cy;
-    double _sideAB, _sideAC, _sideBC;
-    double vAB_x,vAB_y,vAC_x,vAC_y,vBC_x,vBC_y;
-    std::string _id = "Triangle";
+    TwoDimensionalVector _v1;
+    TwoDimensionalVector _v2;
 
 public:
-    Triangle(TwoDimensionalVector *v1, TwoDimensionalVector *v2) : _v1(v1), _v2(v2){
-        //兩個向量的叉積等於零，則它們平行
-        if ((_v1->cross(_v2) == 0) || (_v2->cross(_v1) == 0)){
-          throw std::string("This is not a triangle!");
+    Triangle(TwoDimensionalVector v1, TwoDimensionalVector v2) : _v1(v1), _v2(v2)
+    {
+        auto isEqual = [=](const Point *a, const Point *b) -> bool
+        {
+            return *a == *b;
+        };
+
+        if (isEqual(v1.a(), v2.a()) ||
+            isEqual(v1.b(), v2.b()) ||
+            isEqual(v1.b(), v2.a()) ||
+            isEqual(v1.a(), v2.b()))
+        {
+            if (v1.cross(&v2) == 0)
+            {
+                throw std::string("Two vectors should not be parallel.");
+            }
         }
-        if (!v1->isConnected(v2)){
-          throw std::string("This is not a triangle!");
+        else
+        {
+            throw std::string("Two vectors should be connected.");
         }
-        //三角形的兩個向量應該在頭側或尾側連接,找共同點a
-        // v1, v2的a點相同
-        if((_v1->a()->x() == _v2->a()->x()) && (_v1->a()->y() == _v2->a()->y())){
-            ax = _v1->a()->x(); ay = _v1->a()->y();
-            bx = _v1->b()->x(); by = _v1->b()->y();
-            cx = _v2->b()->x(); cy = _v2->b()->y();}
-        // v1, v2的b點相同
-        else if((_v1->b()->x() == _v2->b()->x()) && (_v1->b()->y() == _v2->b()->y())){
-            ax = _v1->a()->x(); ay = _v1->a()->y();
-            bx = _v1->b()->x(); by = _v1->b()->y();
-            cx = _v2->a()->x(); cy = _v2->a()->y();}
-        // v1的a與v2的b點相同
-        else if((_v1->a()->x() == _v2->b()->x()) && (_v1->a()->y() == _v2->b()->y())){
-            ax = _v1->a()->x(); ay = _v1->a()->y();
-            bx = _v1->b()->x(); by = _v1->b()->y();
-            cx = _v2->a()->x(); cy = _v2->a()->y();}
-        // v1的b與v2的a點相同
-        else if((_v1->b()->x() == _v2->a()->x()) && (_v1->b()->y() == _v2->a()->y())){
-            ax = _v1->a()->x(); ay = _v1->a()->y();
-            bx = _v1->b()->x(); by = _v1->b()->y();
-            cx = _v2->b()->x(); cy = _v2->b()->y();}
-        //定義向量座標
-        vAB_x = fabs( bx - ax );  vAB_y = fabs( by - ay );
-        vAC_x = fabs( cx - ax );  vAC_y = fabs( cy - ay );
-        vBC_x = fabs( cx - bx );  vBC_y = fabs( cy - by );
+    }
+    ~Triangle() {}
 
-        //定義向量大小(邊長)
-        _sideAB = sqrt(  pow( vAB_y, 2)  +  pow( vAB_x, 2)  );
-        _sideAC = sqrt(  pow( vAC_y, 2)  +  pow( vAC_x, 2)  );
-        _sideBC = sqrt(  pow( vBC_y, 2)  +  pow( vBC_x, 2)  );
+    double area() const override
+    {
+        return abs(_v1.cross(&_v2)) / 2;
+    }
 
-    }~Triangle() {}
+    double perimeter() const override
+    {
+        auto isEqual = [=](const Point *a, const Point *b) -> bool
+        {
+            return *a == *b;
+        };
 
-    //三角形面積是叉積除以2
-    double area() const override {return fabs((_v1->cross(_v2))/2);}
+        const Point *p1, *p2;
+        if (isEqual(_v1.a(), _v2.a()))
+        {
+            p1 = _v1.b();
+            p2 = _v2.b();
+        }
+        else if (isEqual(_v1.b(), _v2.b()))
+        {
+            p1 = _v1.a();
+            p2 = _v2.a();
+        }
+        else if (isEqual(_v1.b(), _v2.a()))
+        {
+            p1 = _v1.a();
+            p2 = _v2.b();
+        }
+        else if (isEqual(_v1.a(), _v2.b()))
+        {
+            p1 = _v2.a();
+            p2 = _v1.b();
+        }
+        return _v1.length() + _v2.length() + TwoDimensionalVector(*p1, *p2).length();
+    }
 
-    double perimeter() const override {return _sideAB + _sideAC + _sideBC;}
+    std::string info() const override
+    {
+        return "Triangle (" + _v1.info() + ", " + _v2.info() + ")";
+    }
 
-    std::string info() const override {return "Triangle (" + _v1->info() + ", " + _v2->info() + ")";}
+    Iterator *createIterator(IteratorFactory *factory) override
+    {
+        return factory->createIterator();
+    }
 
-    Iterator* createIterator(IteratorFactory *factory) override {return factory->createIterator();}
+    std::set<Point> getPoints() override
+    {
+        std::set<Point> points = {
+            Point(_v1.a()->x(), _v1.a()->y()),
+            Point(_v1.b()->x(), _v1.b()->y()),
+            Point(_v2.a()->x(), _v2.a()->y()),
+            Point(_v2.b()->x(), _v2.b()->y())};
+        return points;
+    }
 
-    void addShape(Shape* const shape) override {throw std::string("Could not AddShape!!");}
-
-    void deleteShape(Shape* shape) override {throw std::string("Could not DeleteShape!!");}
-
-    std::string id() const override {return _id;}
-
-    void accept(ShapeVisitor* visitor) {visitor->visitTriangle(this);};
-
-    std::set<const Point*> getPoints() override {
-      const Point common = *FindCommonPoint(*_v1, *_v2);
-      const Point uncommon = *FindUncommonPoint(*_v2, common);
-      return {new Point{_v1->head()}, new Point{_v1->tail()}, new Point{uncommon}};
+    void accept(ShapeVisitor *visitor) override
+    {
+        visitor->visitTriangle(this);
     }
 };

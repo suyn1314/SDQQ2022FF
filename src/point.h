@@ -3,30 +3,40 @@
 #include <cmath>
 #include <string>
 
-class Point{
+class Point
+{
 private:
-    double _x;
-    double _y;
+    const double _x;
+    const double _y;
 
 public:
-    Point(double const x, double const y) : _x(x), _y(y){}
+    Point(double x, double y) : _x(x), _y(y) {}
     ~Point() {}
 
-    double x() const {return _x;}
-
-    double y() const {return _y;}
-
-    bool operator==(const Point &pt) const {
-      return (round(_x*100)/100 == round(pt._x*100)/100) &&
-      (round(_y*100)/100 == round(pt._y*100)/100);
+    double x() const
+    {
+        return _x;
     }
 
-    std::string info() const{
-      char *p; p = new char[256];
-      sprintf(p, "%.2f",_x);
-      std::string a = p;
-      sprintf(p, "%.2f",_y);
-      std::string b = p;
-      delete p;
-      return "(" + a + ", " + b + ")";}
+    double y() const
+    {
+        return _y;
+    }
+
+    bool operator==(const Point &pt) const
+    {
+        return (fabs(_x - pt.x()) < 0.001) && (fabs(_y - pt.y()) < 0.001);
+    }
+
+    bool operator<(const Point &pt) const
+    {
+        return _x < pt.x() || (_x == pt.x() && _y < pt.y());
+    }
+
+    std::string info() const
+    {
+        char info[100];
+        sprintf(info, "(%.2f, %.2f)", _x, _y);
+        return info;
+    }
 };

@@ -34,7 +34,7 @@ protected:
         Shape *shapes2[] = {cir2, cs1};
         cs2 = new CompoundShape(shapes2, 2);
 
-        it = cs2->createIterator(new DFSStepIteratorFactory());
+        it = cs2->createIterator(DFSStepIteratorFactory::getInstance());
     }
 
     void TearDown() override
@@ -96,7 +96,7 @@ TEST_F(DFSStepCompoundIteratorTest, DFSOrderShouldBeCorrectIfNoChildrenInCompoun
 {
     Shape *sps[] = {};
     Shape *cs = new CompoundShape(sps, 0);
-    Iterator *it = cs->createIterator(new DFSStepIteratorFactory());
+    Iterator *it = cs->createIterator(DFSStepIteratorFactory::getInstance());
     ASSERT_TRUE(it->isDone());
     ASSERT_ANY_THROW(it->currentItem());
     ASSERT_ANY_THROW(it->next());
@@ -109,7 +109,7 @@ TEST_F(DFSStepCompoundIteratorTest, DFSOrderShouldBeCorrectIfACircleInCompound)
     Shape *cir = new Circle(vec1);
     Shape *sps[] = {cir};
     Shape *cs = new CompoundShape(sps, 1);
-    Iterator *it = cs->createIterator(new DFSStepIteratorFactory());
+    Iterator *it = cs->createIterator(DFSStepIteratorFactory::getInstance());
     ASSERT_FALSE(it->isDone());
     ASSERT_EQ(it->currentItem(), cir);
     ASSERT_NO_THROW(it->next());
@@ -129,7 +129,7 @@ TEST_F(DFSStepCompoundIteratorTest, DFSOrderShouldBeCorrectWithMultipleCompoundS
     Shape *cs3 = new CompoundShape(sps3, 1);
     Shape *sps4[] = {cs3, cs1};
     Shape *cs4 = new CompoundShape(sps4, 2);
-    Iterator *it = cs4->createIterator(new DFSStepIteratorFactory());
+    Iterator *it = cs4->createIterator(DFSStepIteratorFactory::getInstance());
     ASSERT_FALSE(it->isDone());
     ASSERT_EQ(it->currentItem(), cs3);
     ASSERT_EQ(it->currentItem(), cs3);
@@ -167,7 +167,7 @@ TEST_F(DFSStepCompoundIteratorTest, DFSOrderShouldBeCorrectWithComplicatedTreeSt
     Shape *cs3 = new CompoundShape(sps3, 2);
     Shape *sps4[] = {cs3, cir4};
     Shape *cs4 = new CompoundShape(sps4, 2);
-    Iterator *it = cs4->createIterator(new DFSStepIteratorFactory());
+    Iterator *it = cs4->createIterator(DFSStepIteratorFactory::getInstance());
     ASSERT_FALSE(it->isDone());
     ASSERT_EQ(it->currentItem(), cs3);
     ASSERT_EQ(it->currentItem(), cs3);

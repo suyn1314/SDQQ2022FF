@@ -35,7 +35,7 @@ public:
         _current = _begin;
         if (_current != _end)
             _its.push((*_current)->createIterator(
-                new BFSStepIteratorFactory()
+                BFSStepIteratorFactory::getInstance()
             ));
     }
 
@@ -71,7 +71,7 @@ public:
             else
             {
                 _its.push((*_current)->createIterator(
-                    new BFSStepIteratorFactory()
+                    BFSStepIteratorFactory::getInstance()
                 ));
             }
         }

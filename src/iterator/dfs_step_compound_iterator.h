@@ -26,7 +26,7 @@ public:
         _current = _begin;
         if (_current != _end)
             _currentIt = (*_current)->createIterator(
-                new DFSStepIteratorFactory()
+                DFSStepIteratorFactory::getInstance()
             );
         _currentReturned = false;
         _currentItFirstCalled = false;
@@ -61,7 +61,7 @@ public:
             if (_current != _end)
             {
                 _currentIt = (*_current)->createIterator(
-                    new DFSStepIteratorFactory()
+                    DFSStepIteratorFactory::getInstance()
                 );
                 _currentReturned = false;
                 _currentItFirstCalled = false;
@@ -81,7 +81,7 @@ public:
                     _current++;
                     if (_current != _end)
                         _currentIt = (*_current)->createIterator(
-                            new DFSStepIteratorFactory()
+                            DFSStepIteratorFactory::getInstance()
                         );
                     _currentReturned = false;
                     _currentItFirstCalled = false;

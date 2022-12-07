@@ -13,41 +13,67 @@ class CollisionDetector : public ShapeVisitor
 {
 private:
     std::vector<Shape *> _collideResult;
-    BoundingBox _boundingBox;
+    BoundingBox *_targetBoundingBox;
 
 public:
-    CollisionDetector(Shape *shape) : _boundingBox{shape->getPoints()} {}
-
-    void visitCircle(Circle *circle) override {
-      if (circle->id() == "Circle"){VisitSimpleShape(circle);}
+    CollisionDetector(Shape *shape)
+    {
+        _targetBoundingBox = new BoundingBox(shape->getPoints());
     }
 
-    void visitTriangle(Triangle *triangle) override {
-      if (triangle->id() == "Triangle"){VisitSimpleShape(triangle);}
+    ~CollisionDetector()
+    {
+        delete _targetBoundingBox;
     }
 
-    void visitRectangle(Rectangle *rectangle) override {
-      if (rectangle->id() == "Rectangle"){VisitSimpleShape(rectangle);}
-    }
-
-    void visitCompoundShape(CompoundShape *compoundShape) override {
-      if (compoundShape->id() == "CompoundShape"){
-        auto boundingBoxDetect = BoundingBox{compoundShape->getPoints()};
-        if (_boundingBox.collide(&boundingBoxDetect)) {
-          auto factory = ListIteratorFactory{};
-          for (auto it = compoundShape->createIterator(&factory); !it->isDone(); it->next()) {
-            it->currentItem()->accept(this);
-          }
+    void visitCircle(Circle *circle) override
+    {
+        BoundingBox *box = new BoundingBox(circle->getPoints());
+        if (box->collide(_targetBoundingBox))
+        {
+            _collideResult.push_back(circle);
         }
-      }
+        delete box;
     }
 
-    void VisitSimpleShape(Shape* shape) {
-    auto boundingBoxDetect = BoundingBox{shape->getPoints()};
-    if (_boundingBox.collide(&boundingBoxDetect)) {
-      _collideResult.push_back(shape);
+    void visitTriangle(Triangle *triangle) override
+    {
+        BoundingBox *box = new BoundingBox(triangle->getPoints());
+        if (box->collide(_targetBoundingBox))
+        {
+            _collideResult.push_back(triangle);
+        }
+        delete box;
     }
-  }
 
-    std::vector<Shape *> collidedShapes() const {return _collideResult;}
+    void visitRectangle(Rectangle *rectangle) override
+    {
+        BoundingBox *box = new BoundingBox(rectangle->getPoints());
+        if (box->collide(_targetBoundingBox))
+        {
+            _collideResult.push_back(rectangle);
+        }
+        delete box;
+    }
+
+    void visitCompoundShape(CompoundShape *compoundShape) override
+    {
+        BoundingBox *box = new BoundingBox(compoundShape->getPoints());
+        if (box->collide(_targetBoundingBox))
+        {
+            Iterator *it = compoundShape->createIterator(
+                IteratorFactory::getInstance("List"));
+            for (it->first(); !it->isDone(); it->next())
+            {
+                it->currentItem()->accept(this);
+            }
+            delete it;
+        }
+        delete box;
+    }
+
+    std::vector<Shape *> collidedShapes() const
+    {
+        return _collideResult;
+    }
 };

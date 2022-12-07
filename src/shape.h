@@ -1,35 +1,31 @@
 #pragma once
 
-#include "point.h"
-#include "iterator/factory/iterator_factory.h"
-#include "iterator/iterator.h"
-#include "visitor/shape_visitor.h"
-#include <stdexcept>
-#include <exception>
-#include <set>
 #include <string>
+#include <set>
 
-//<Interface>
-class Shape{
+class Iterator;
+class Point;
+class ShapeVisitor;
+class IteratorFactory;
+
+class Shape
+{
 public:
-  virtual ~Shape() {}
-  virtual void accept(ShapeVisitor* visitor) = 0;
-  virtual std::set<const Point*> getPoints() = 0;
-  virtual Iterator* createIterator(IteratorFactory * factory) = 0;
+    virtual ~Shape() {}
+    virtual double area() const = 0;
+    virtual double perimeter() const = 0;
+    virtual std::string info() const = 0;
+    virtual Iterator* createIterator(IteratorFactory * factory) = 0;
+    virtual std::set<Point> getPoints() = 0;
+    virtual void accept(ShapeVisitor* visitor) = 0;
 
-  virtual std::string id() const = 0;
-  virtual double area() const = 0;
-  virtual double perimeter() const = 0;
-  virtual std::string info() const = 0;
-
-  virtual void addShape(Shape* shape) {
-      throw ShapeException{"Could not AddShape!!"};
-    }
-  virtual void deleteShape(Shape* shape) {
-      throw ShapeException{"Could not DeleteShape!!"};
+    virtual void addShape(Shape* shape)
+    {
+        throw "can't add shape";
     }
 
-  class ShapeException : public std::runtime_error {
-      using std::runtime_error::runtime_error;
-    };
- };
+    virtual void deleteShape(Shape* shape)
+    {
+        throw "can't add shape";
+    }
+};

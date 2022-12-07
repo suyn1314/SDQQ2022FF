@@ -5,7 +5,6 @@ class Triangle;
 class Rectangle;
 class CompoundShape;
 
-//<Interface>
 class ShapeVisitor
 {
 public:

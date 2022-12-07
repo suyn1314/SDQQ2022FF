@@ -1,179 +1,191 @@
-#include "../src/point.h"
-#include "../src/two_dimensional_vector.h"
 #include "../src/rectangle.h"
-#include "../src/iterator/factory/bfs_iterator_factory.h"
-#include "../src/iterator/factory/dfs_iterator_factory.h"
-#include "../src/iterator/factory/list_iterator_factory.h"
 #include "../src/iterator/iterator.h"
+#include "../src/iterator/factory/dfs_iterator_factory.h"
+#include "../src/iterator/factory/bfs_iterator_factory.h"
 
-TEST(RectangleTest,RectangleValue){
-  ASSERT_EQ(2,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3))))->length());
-  ASSERT_EQ(3,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3))))->width());
+class RectangleTest : public ::testing::Test
+{
+protected:
+    Point *E, *F, *I, *J, *G, *H;
+    TwoDimensionalVector *k, *l, *m, *n, *f;
+    void SetUp() override
+    {
+        I = new Point(20, 13);
+        J = new Point(16, 14);
+        G = new Point(15, 10);
+        H = new Point(19, 9);
+        E = new Point(5, 11);
+        F = new Point(6, 12);
+        k = new TwoDimensionalVector(*I, *J);
+        l = new TwoDimensionalVector(*J, *G);
+        m = new TwoDimensionalVector(*G, *H);
+        n = new TwoDimensionalVector(*H, *I);
+        f = new TwoDimensionalVector(*E, *F);
+    }
+
+    void TearDown() override
+    {
+        delete E;
+        delete F;
+        delete I;
+        delete J;
+        delete G;
+        delete H;
+        delete f;
+        delete k;
+        delete l;
+        delete m;
+        delete n;
+    }
+};
+
+TEST_F(RectangleTest, LegalRectangle)
+{
+    ASSERT_NO_THROW(Rectangle(*k, *l));
+    ASSERT_NO_THROW(Rectangle(*l, *m));
+    ASSERT_NO_THROW(Rectangle(*m, *n));
+    ASSERT_NO_THROW(Rectangle(*n, *k));
 }
 
-TEST(RectangleTest,RectangleArea){
-  ASSERT_EQ(6,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3))))->area());
-  ASSERT_EQ(9,(new Rectangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(4, 1)),
-    new TwoDimensionalVector(new Point(1, 1),new Point(1, 4))))->area());
-  ASSERT_EQ(12,(new Rectangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(1, 4)),
-    new TwoDimensionalVector(new Point(1, 1),new Point(-3, 1))))->area());
-  ASSERT_EQ(15,(new Rectangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(1, -4)),
-    new TwoDimensionalVector(new Point(1, 1),new Point(4, 1))))->area());
-  ASSERT_EQ(20,(new Rectangle(
-    new TwoDimensionalVector(new Point(1, 1),new Point(1, -4)),
-    new TwoDimensionalVector(new Point(1, 1),new Point(-3, 1))))->area());
+TEST_F(RectangleTest, IllegalRectangle)
+{
+    ASSERT_ANY_THROW(Rectangle(*l, *n));
+    ASSERT_ANY_THROW(Rectangle(*k, *m));
+    ASSERT_ANY_THROW(Rectangle(*f, *k));
+    ASSERT_ANY_THROW(Rectangle(*l, *f));
 }
 
-TEST(RectangleTest,RectanglePerimeter){
-  ASSERT_EQ(20,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 5),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(5, 0))))->perimeter());
-  ASSERT_EQ(20,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 5)),
-    new TwoDimensionalVector(new Point(5, 0),new Point(0, 0))))->perimeter());
-  ASSERT_EQ(20,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 5),new Point(0, 0)),
-    new TwoDimensionalVector(new Point(5, 0),new Point(0, 0))))->perimeter());
-  ASSERT_EQ(20,(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(5, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 5))))->perimeter());
-}
-TEST(RectangleTest,RectangleInfo) {
-  ASSERT_EQ("Rectangle (Vector ((0.00, 0.00), (3.00, 0.00)), Vector ((0.00, 0.00), (0.00, 4.00)))",(new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(3, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 4))
-))->info());
+TEST_F(RectangleTest, LengthShouldBeCorrect)
+{
+    ASSERT_NEAR(k->length(), Rectangle(*k, *l).length(), 0.001);
+    ASSERT_NEAR(n->length(), Rectangle(*n, *m).length(), 0.001);
 }
 
-TEST(RectangleTest,NotRectangle){
-  try{
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)),
-      new TwoDimensionalVector(new Point(0, 0),new Point(0, 0)));
-  }catch(std::string e){
-    ASSERT_EQ("This is not a rectangle!",e);
-  }
-  try{
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(1, 2),new Point(3, 4)),
-      new TwoDimensionalVector(new Point(1, 2),new Point(3, 4)));
-  }catch(std::string e){
-    ASSERT_EQ("This is not a rectangle!",e);
-  }
-  try{
-    Shape* rectangle = new Rectangle(
-      new TwoDimensionalVector(new Point(0, 2),new Point(3, 0)),
-      new TwoDimensionalVector(new Point(1, 0),new Point(0, 4)));
-  }catch(std::string e){
-    ASSERT_EQ("This is not a rectangle!",e);
-  }
+TEST_F(RectangleTest, WidthShouldBeCorrect)
+{
+    ASSERT_NEAR(l->length(), Rectangle(*k, *l).width(), 0.001);
+    ASSERT_NEAR(m->length(), Rectangle(*n, *m).width(), 0.001);
 }
 
-TEST(RectangleTest, CreateBFSIterator) {
-  Shape* rectangle = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-
-  Iterator *it = rectangle->createIterator(new BFSIteratorFactory());
-
-  ASSERT_ANY_THROW(it->first());
-  ASSERT_ANY_THROW(it->currentItem());
-  ASSERT_ANY_THROW(it->next());
-  ASSERT_TRUE(it->isDone());
-
-  delete it;
+TEST_F(RectangleTest, AreaShouldBeCorrect)
+{
+    ASSERT_NEAR(17, Rectangle(*k, *l).area(), 0.001);
+    ASSERT_NEAR(17, Rectangle(*n, *m).area(), 0.001);
 }
 
-
-TEST(RectangleTest, CreateDFSIterator) {
-  Shape* rectangle = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  Iterator *it = rectangle->createIterator(new DFSIteratorFactory());
-
-  ASSERT_ANY_THROW(it->first());
-  ASSERT_ANY_THROW(it->currentItem());
-  ASSERT_ANY_THROW(it->next());
-  ASSERT_TRUE(it->isDone());
-
-  delete it;
+TEST_F(RectangleTest, PerimeterShouldBeCorrect)
+{
+    ASSERT_NEAR(16.4924, Rectangle(*k, *l).perimeter(), 0.001);
+    ASSERT_NEAR(16.4924, Rectangle(*n, *m).perimeter(), 0.001);
 }
 
-TEST(RectangleTest, CreateListIterator) {
-  Shape* rectangle = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  Iterator *it = rectangle->createIterator(new ListIteratorFactory());
-
-  ASSERT_ANY_THROW(it->first());
-  ASSERT_ANY_THROW(it->currentItem());
-  ASSERT_ANY_THROW(it->next());
-  ASSERT_TRUE(it->isDone());
-
-  delete it;
+TEST_F(RectangleTest, InfoShouldBeCorrect)
+{
+    Rectangle rec(*k, *l);
+    ASSERT_EQ("Rectangle (Vector ((20.00, 13.00), (16.00, 14.00)), Vector ((16.00, 14.00), (15.00, 10.00)))", rec.info());
 }
 
-TEST(RectangleTest, AddShapeTest) {
-  Shape* rectangle = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  Shape* rectangle1 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  try {
-      rectangle->addShape(rectangle1);
-  }
-  catch(std::string e) {
-      ASSERT_EQ(std::string("Could not AddShape!!"), e);
-  }
+// hw 2
+TEST_F(RectangleTest, AddShapeShouldThrowException)
+{
+    Rectangle rec(*k, *l);
+    Shape *s = new Rectangle(*k, *l);
+
+    ASSERT_ANY_THROW(rec.addShape(s));
+
+    delete s;
 }
 
-TEST(RectangleTest, DeleteShapeTest) {
-  Shape* rectangle = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  Shape* rectangle1 = new Rectangle(
-    new TwoDimensionalVector(new Point(0, 0),new Point(2, 0)),
-    new TwoDimensionalVector(new Point(0, 0),new Point(0, 3)));
-  try {
-      rectangle->deleteShape(rectangle1);
-  }
-  catch(std::string e) {
-      ASSERT_EQ(std::string("Could not DeleteShape!!"), e);
-  }
+TEST_F(RectangleTest, DeleteShapeShouldThrowException)
+{
+    Rectangle rec(*k, *l);
+    Shape *s = new Rectangle(*k, *l);
+
+    ASSERT_ANY_THROW(rec.deleteShape(s));
+
+    delete s;
 }
 
-//hw3
-TEST(RectangleTest, GetPointsTeat) {
-  Point* A = new Point(20, 13);
-  Point* B = new Point(16, 14);
-  Point* C = new Point(15, 10);
-  Point* D = new Point(19, 9);
-  TwoDimensionalVector* v1 = new TwoDimensionalVector(A, B);
-  TwoDimensionalVector* v2 = new TwoDimensionalVector(B, C);
-  Shape* rectangle = new Rectangle(v1, v2);
+TEST_F(RectangleTest, CurrentItemOfDFSIteratorShouldThrowException)
+{
+    Rectangle rec(*k, *l);
+    Iterator *it = rec.createIterator(IteratorFactory::getInstance("DFS"));
+    ASSERT_ANY_THROW(it->currentItem());
 
-  std::set<const Point *> points = rectangle->getPoints();
-
-  std::set<const Point *, bool (*)(const Point *, const Point *)> actualPoints(
-       points.begin(), points.end(),
-       [](const Point *p1, const Point *p2) -> bool
-       {
-           return p1->x() < p2->x() || (p1->x() == p2->x() && p1->y() < p2->y());
-       });
-  ASSERT_TRUE(actualPoints.find(A) != actualPoints.end());
-  ASSERT_TRUE(actualPoints.find(B) != actualPoints.end());
-  ASSERT_TRUE(actualPoints.find(C) != actualPoints.end());
-  ASSERT_TRUE(actualPoints.find(D) != actualPoints.end());
-  ASSERT_FALSE(rectangle->getPoints().empty());
-  ASSERT_EQ(4,rectangle->getPoints().size());
+    delete it;
 }
+
+TEST_F(RectangleTest, IsDoneOfDFSIteratorShouldReturnTrue)
+{
+    Rectangle rec(*k, *l);
+    Iterator *it = rec.createIterator(IteratorFactory::getInstance("DFS"));
+    ASSERT_TRUE(it->isDone());
+
+    delete it;
+}
+
+TEST_F(RectangleTest, CurrentItemOfBFSIteratorShouldThrowException)
+{
+    Rectangle rec(*k, *l);
+    Iterator *it = rec.createIterator(IteratorFactory::getInstance("BFS"));
+    ASSERT_ANY_THROW(it->currentItem());
+
+    delete it;
+}
+
+TEST_F(RectangleTest, IsDoneOfBFSIteratorShouldReturnTrue)
+{
+    Rectangle rec(*k, *l);
+    Iterator *it = rec.createIterator(IteratorFactory::getInstance("BFS"));
+    ASSERT_TRUE(it->isDone());
+
+    delete it;
+}
+
+// hw 3
+TEST_F(RectangleTest, GetPointsShouldBeCorrect)
+{
+    Rectangle rec(*k, *l);
+    std::set<Point> points = rec.getPoints();
+    ASSERT_TRUE(points.size() == 4);
+    ASSERT_TRUE(points.find(*J) != points.end());
+    ASSERT_TRUE(points.find(*I) != points.end());
+    ASSERT_TRUE(points.find(*G) != points.end());
+    ASSERT_TRUE(points.find(*H) != points.end());
+}
+
+// TEST_F(RectangleTest, FindFourthVertexShouldBeCorrect)
+// {
+//     Point *K = new Point(0, -1);
+//     Point *U = new Point(-1, -2);
+//     Point *M = new Point(0, -3);
+//     Point *N = new Point(1, -2);
+//     Rectangle *dummy_rect = new Rectangle(
+//         new TwoDimensionalVector(K, U),
+//         new TwoDimensionalVector(K, N));
+//     ASSERT_EQ(
+//         *(dummy_rect->findFourthVertex(
+//             new TwoDimensionalVector(K, U),
+//             new TwoDimensionalVector(K, N))),
+//         *M);
+//     ASSERT_EQ(
+//         *(dummy_rect->findFourthVertex(
+//             new TwoDimensionalVector(M, U),
+//             new TwoDimensionalVector(U, K))),
+//         *N);
+//     ASSERT_EQ(
+//         *(dummy_rect->findFourthVertex(
+//             new TwoDimensionalVector(K, N),
+//             new TwoDimensionalVector(M, N))),
+//         *U);
+//     ASSERT_EQ(
+//         *(dummy_rect->findFourthVertex(
+//             new TwoDimensionalVector(N, M),
+//             new TwoDimensionalVector(K, N))),
+//         *U);
+//     delete dummy_rect;
+//     delete K;
+//     delete U;
+//     delete M;
+//     delete N;
+// }

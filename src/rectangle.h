@@ -1,63 +1,123 @@
 #pragma once
 
+#include <string>
+#include <set>
 #include "shape.h"
-#include "point.h"
 #include "two_dimensional_vector.h"
-#include "iterator/factory/iterator_factory.h"
+#include "./iterator/factory/iterator_factory.h"
 #include "./visitor/shape_visitor.h"
-#include <cmath>
 
 class Rectangle : public Shape
 {
 private:
-    TwoDimensionalVector *_lengthVec;
-    TwoDimensionalVector *_widthVec;
-    std::string _id = "Rectangle";
+    TwoDimensionalVector _lengthVec;
+    TwoDimensionalVector _widthVec;
 
-    Point Vertex(const Point& commonB, const Point& uncommonA, const Point& uncommonC) const {
-      //A + C - B
-      double x = uncommonA.x() + uncommonC.x() - commonB.x();
-      double y = uncommonA.y() + uncommonC.y() - commonB.y();
-      return Point{x, y};
-    }
 public:
-    Rectangle(TwoDimensionalVector *lengthVec, TwoDimensionalVector *widthVec) :_lengthVec(lengthVec) ,_widthVec(widthVec){
-      //點積為0，為90度
-      if (lengthVec->dot(widthVec) != 0){
-        throw std::string("This is not a rectangle!");}
-      if (!lengthVec->isConnected(widthVec)){
-        throw std::string("This is not a rectangle!");
-      }
-    }~Rectangle() {}
+    Rectangle(TwoDimensionalVector lengthVec, TwoDimensionalVector widthVec) : _lengthVec(lengthVec), _widthVec(widthVec)
+    {
+        auto isEqual = [=](const Point *a, const Point *b) -> bool
+        {
+            return *a == *b;
+        };
 
-    double length() const {
-      return _lengthVec->length();
+        if (isEqual(_lengthVec.a(), _widthVec.a()) ||
+            isEqual(_lengthVec.b(), _widthVec.b()) ||
+            isEqual(_lengthVec.b(), _widthVec.a()) ||
+            isEqual(_lengthVec.a(), _widthVec.b()))
+        {
+            if (lengthVec.dot(&widthVec) != 0)
+            {
+                throw std::string("Two vectors should be orthogonal.");
+            }
+        }
+        else
+        {
+            throw std::string("Two vectors should be connected.");
+        }
+    }
+    ~Rectangle() {}
+
+    double length() const
+    {
+        return _lengthVec.length();
     }
 
-    double width() const {
-      return _widthVec->length();
+    double width() const
+    {
+        return _lengthVec.length();
     }
 
-    double area() const override {return fabs(_lengthVec->cross(_widthVec));}
+    double area() const override
+    {
+        return _lengthVec.length() * _widthVec.length();
+    }
 
-    double perimeter() const override {return 2*(length()+width());}
+    double perimeter() const override
+    {
+        return (_lengthVec.length() + _widthVec.length()) * 2;
+    }
 
-    std::string info() const override {return "Rectangle (" + _lengthVec->info() + ", " + _widthVec->info() + ")";}
+    std::string info() const override
+    {
+        return "Rectangle (" + _lengthVec.info() + ", " + _widthVec.info() + ")";
+    }
 
-    Iterator* createIterator(IteratorFactory *factory) override {return factory->createIterator();}
+    Iterator *createIterator(IteratorFactory *factory) override
+    {
+        return factory->createIterator();
+    }
 
-    void addShape(Shape* const shape) override {throw std::string("Could not AddShape!!");}
+    Point findFourthVertex(TwoDimensionalVector *vec1, TwoDimensionalVector *vec2)
+    {
+        auto isEqual = [=](const Point *a, const Point *b) -> bool
+        {
+            return *a == *b;
+        };
 
-    void deleteShape(Shape* shape) override {throw std::string("Could not DeleteShape!!");}
+        const Point *A, *B, *C;
+        if (isEqual(vec1->a(), vec2->a()))
+        {
+            A = vec1->b();
+            B = vec2->b();
+            C = vec1->a();
+        }
+        else if (isEqual(vec1->b(), vec2->b()))
+        {
+            A = vec1->a();
+            B = vec2->a();
+            C = vec1->b();
+        }
+        else if (isEqual(vec1->b(), vec2->a()))
+        {
+            A = vec1->a();
+            B = vec2->b();
+            C = vec1->b();
+        }
+        else if (isEqual(vec1->a(), vec2->b()))
+        {
+            A = vec1->b();
+            B = vec2->a();
+            C = vec1->a();
+        }
+        return Point(
+            A->x() + B->x() - C->x(),
+            A->y() + B->y() - C->y());
+    }
 
-    std::string id() const override {return _id;}
+    std::set<Point> getPoints() override
+    {
+        std::set<Point> points = {
+            Point(_lengthVec.a()->x(), _lengthVec.a()->y()),
+            Point(_lengthVec.b()->x(), _lengthVec.b()->y()),
+            Point(_widthVec.a()->x(), _widthVec.a()->y()),
+            Point(_widthVec.b()->x(), _widthVec.b()->y()),
+            this->findFourthVertex(&_lengthVec, &_widthVec)};
+        return points;
+    }
 
-    void accept(ShapeVisitor* visitor) {visitor->visitRectangle(this);};
-
-    std::set<const Point*> getPoints() override {
-      const Point common = *FindCommonPoint(*_lengthVec, *_widthVec);
-      const Point uncommon_length = *FindUncommonPoint(*_lengthVec, common);
-      const Point uncommon_width = *FindUncommonPoint(*_widthVec, common);
-      return {new Point{common}, new Point{uncommon_length}, new Point{uncommon_width}, new Point{Vertex(common, uncommon_length, uncommon_width)}};
+    void accept(ShapeVisitor *visitor) override
+    {
+        visitor->visitRectangle(this);
     }
 };
